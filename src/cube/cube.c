@@ -25,11 +25,3 @@ Cube newCube() {
 void freeCube(Cube cube) {
 	free(cube);
 }
-
-bool isSolved(Cube cube) {
-	for (int cornerId = 0; cornerId < 8; cornerId++) {
-		if (cube->corners[cornerId].id != cornerId) return false;
-		if (cube->corners[cornerId].rotation != 0) return false;
-	}
-	return true;
-}

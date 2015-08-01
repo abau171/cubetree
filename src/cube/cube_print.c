@@ -17,7 +17,6 @@ static void printStickerRow(Cube cube, CubeFaceId faceId, int y) {
 }
 
 void printCube(Cube cube) {
-	printf("cube: \n");
 	for (int y = 0; y < 3; y++) {
 		printf("     ");
 		printStickerRow(cube, U, y);
@@ -36,4 +35,16 @@ void printCube(Cube cube) {
 		printStickerRow(cube, D, y);
 		putchar('\n');
 	}
+}
+
+char faceChars[6] = {'U', 'L', 'F', 'R', 'B', 'D'};
+
+void printMove(CubeFaceId faceId, TurnType type) {
+	putchar(faceChars[faceId]);
+	if (type == COUNTER_TURN) {
+		putchar('\'');
+	} else if (type == DOUBLE_TURN) {
+		putchar(faceChars[faceId]);
+	}
+	putchar('\n');
 }

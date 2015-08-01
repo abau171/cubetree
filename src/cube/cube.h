@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 typedef char CubeFaceId;
+#define NO_FACE -1
 #define U 0
 #define L 1
 #define F 2
@@ -25,8 +26,12 @@ void freeCube(Cube cube);
 
 bool isSolved(Cube cube);
 
+void shuffleCube(Cube cube);
+
 void turnCubeFace(Cube cube, CubeFaceId face, TurnType type);
 
 void printCube(Cube cube);
+
+void printMove(CubeFaceId faceId, TurnType type);
 
 #endif
