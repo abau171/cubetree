@@ -68,6 +68,8 @@ static void quarterFlipEdges(Cube cube, CubeFaceId faceId, TurnType type) {
 void turnCubeFace(Cube cube, CubeFaceId faceId, TurnType type) {
 	switch (type) {
 	case DOUBLE_TURN:
+		turnCubeFace(cube, faceId, CLOCKWISE_TURN);
+		turnCubeFace(cube, faceId, CLOCKWISE_TURN);
 		break;
 	case CLOCKWISE_TURN:
 	case COUNTER_TURN:
