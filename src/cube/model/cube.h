@@ -24,7 +24,7 @@ Cube newCube();
 
 void freeCube(Cube cube);
 
-bool isSolved(Cube cube);
+bool cubeIsSolved(Cube cube);
 
 void shuffleCube(Cube cube, int numTurns);
 

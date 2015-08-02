@@ -1,10 +1,15 @@
 #include <stdio.h>
 
-#include "cube/model/cube.h"
+#include "puzzle.h"
 
 void main() {
-	Cube cube = newCube();
-	shuffleCube(cube, 5);
-	printCube(cube);
-	freeCube(cube);
+	void* state = generateStartState();
+	printf("%d\n", getNumPossibleMoves());
+	printf("%d\n", (*(getStatePruningFunction()))(state));
+	printf("%d\n", (*(getMovePruningFunction()))(state, 0));
+	printf("%d\n", isSolved(state));
+	makeMove(state, 0);
+	printf("%d\n", isSolved(state));
+	undoMove(state, 0);
+	printf("%d\n", isSolved(state));
 }
