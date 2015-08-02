@@ -1,7 +1,7 @@
 CFLAGS=-Wall -Wextra
 
-SOURCES=$(wildcard src/**/*.c src/*.c)
-OBJECTS=$(patsubst src/%.c,src/%.o,$(SOURCES))
+SOURCES=$(shell find src/ -type f -name "*.c")
+OBJECTS=$(patsubst src/%.c,obj/%.o,$(SOURCES))
 
 TARGET=bin/CubeTree
 
@@ -10,13 +10,13 @@ all: $(TARGET)
 $(TARGET): bin/ $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@
 
-%.o:%.c
+obj/%.o:src/%.c
+	@mkdir -p "$(@D)"
 	$(CC) -c -o $@ $<
 
 bin/:
 	@mkdir -p bin
 
 clean:
-	rm -rf bin
-	rm -f src/*.o
-	rm -f src/**/*.o
+	@rm -rf bin
+	@rm -rf obj
