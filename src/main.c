@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "cube/cube.h"
+#include "cube/model/cube.h"
 
 void main() {
 	Cube cube = newCube();
