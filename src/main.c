@@ -4,7 +4,7 @@
 
 void main() {
 	Cube cube = newCube();
-	shuffleCube(cube);
+	shuffleCube(cube, 5);
 	printCube(cube);
 	freeCube(cube);
 }

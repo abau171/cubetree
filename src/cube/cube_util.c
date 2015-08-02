@@ -5,8 +5,6 @@
 #include "cube.h"
 #include "cube_internal.h"
 
-#define SHUFFLE_TURNS 3
-
 bool isSolved(Cube cube) {
 	for (int cornerId = 0; cornerId < 8; cornerId++) {
 		if (cube->corners[cornerId].id != cornerId) return false;
@@ -15,10 +13,10 @@ bool isSolved(Cube cube) {
 	return true;
 }
 
-void shuffleCube(Cube cube) {
+void shuffleCube(Cube cube, int numTurns) {
 	srand(time(NULL));
 	CubeFaceId lastFaceId = NO_FACE;
-	for (int i = 0; i < SHUFFLE_TURNS; i++) {
+	for (int i = 0; i < numTurns; i++) {
 		CubeFaceId nextFaceId;
 		do {
 			nextFaceId = (rand() % 6);

@@ -26,7 +26,7 @@ void freeCube(Cube cube);
 
 bool isSolved(Cube cube);
 
-void shuffleCube(Cube cube);
+void shuffleCube(Cube cube, int numTurns);
 
 void turnCubeFace(Cube cube, CubeFaceId face, TurnType type);
 
