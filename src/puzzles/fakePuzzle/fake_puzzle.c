@@ -2,10 +2,19 @@
 
 #include "../../puzzle_module.h"
 
-static void __attribute__((constructor)) registerFake() {
+void turnCubeFace() {
+	int i = 0;
+	i++;
+}
+
+static void* getStartState() {
+	return NULL;
+}
+
+static void __attribute__((constructor)) registerPuzzle() {
 	registerPuzzleModule("Fake Puzzle",
 		0,
-		NULL,
+		&getStartState,
 		NULL,
 		NULL,
 		NULL,

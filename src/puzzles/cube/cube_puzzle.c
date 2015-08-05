@@ -35,7 +35,7 @@ static bool isSolved(void* state) {
 	return cubeIsSolved(state);
 }
 
-static void __attribute__((constructor)) registerCube() {
+static void __attribute__((constructor)) registerPuzzle() {
 	registerPuzzleModule("Standard 3x3 Rubik's Cube",
 		numPossibleMoves,
 		&getStartState,
