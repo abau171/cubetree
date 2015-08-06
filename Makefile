@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Wextra
+CFLAGS=-std=gnu99 -Wall -Wextra
 
 SOLVER_SOURCES=$(shell find src/ -mindepth 1 -maxdepth 1 -type f -name "*.c") $(shell find src/solver/ -type f -name "*.c")
 SOLVER_OBJECTS=$(patsubst src/%.c,obj/%.o,$(SOLVER_SOURCES))
@@ -17,7 +17,7 @@ all: $(TARGET)
 $(TARGET): bin/ $(SOLVER_OBJECTS) $(PUZZLE_MOD_OBJECTS)
 	@echo ""
 	@echo "Linking Solver and Puzzle Modules..."
-	@$(CC) -s $(SOLVER_OBJECTS) $(PUZZLE_MOD_OBJECTS) -o $@
+	@$(CC) -s $(SOLVER_OBJECTS) $(PUZZLE_MOD_OBJECTS) -o $@ $(CFLAGS)
 	@echo ""
 
 obj/puzzles/%.o: src/puzzles/% $(ALL_PUZZLE_OBJECTS)
@@ -31,7 +31,7 @@ obj/puzzles/%.o: src/puzzles/% $(ALL_PUZZLE_OBJECTS)
 
 obj/%.o: src/%.c
 	@mkdir -p "$(@D)"
-	$(CC) -c -o $@ $<
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 bin/:
 	@mkdir -p bin
