@@ -10,10 +10,13 @@ static void* getStartState() {
 }
 
 static bool pruneState(void* state) {
+	(void) state;
 	return false;
 }
 
 static bool pruneMove(void* state, int moveId) {
+	(void) state;
+	(void) moveId;
 	return false;
 }
 

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef char CubeCornerId;
+typedef int8_t CubeCornerId;
 #define UFR 0
 #define UFL 1
 #define UBL 2
@@ -13,7 +13,7 @@ typedef char CubeCornerId;
 #define DBL 6
 #define DBR 7
 
-typedef char CubeEdgeId;
+typedef int8_t CubeEdgeId;
 #define UF 0
 #define UL 1
 #define UB 2
@@ -27,14 +27,14 @@ typedef char CubeEdgeId;
 #define DB 10
 #define DR 11
 
-typedef char CubeCornerRotation;
+typedef int8_t CubeCornerRotation;
 #define NO_ROT 0
 #define CLOCKWISE_ROT 1
 #define COUNTER_ROT 2
 
 #define wrapCornerRotation(rot) ((rot) % 3)
 
-typedef char CubeEdgeFlip;
+typedef int8_t CubeEdgeFlip;
 #define NO_FLIP 0
 #define FLIP 1
 

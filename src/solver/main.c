@@ -1,8 +1,9 @@
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "../puzzle_module.h"
 
-void main() {
+int main() {
 	puts("Available Puzzles:");
 	PuzzleModuleNode curNode = firstPuzzleModuleNode;
 	int nodeNum = 0;
@@ -10,4 +11,5 @@ void main() {
 		printf("\t[%d] %s\n", ++nodeNum, curNode->puzzleModule.moduleName);
 		curNode = curNode->next;
 	}
+	return EXIT_SUCCESS;
 }

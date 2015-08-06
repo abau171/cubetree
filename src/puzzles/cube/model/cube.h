@@ -1,9 +1,10 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <stdint.h>
 #include <stdbool.h>
 
-typedef char CubeFaceId;
+typedef int8_t CubeFaceId;
 #define NO_FACE -1
 #define U 0
 #define L 1
@@ -12,7 +13,7 @@ typedef char CubeFaceId;
 #define B 4
 #define D 5
 
-typedef char TurnType;
+typedef int8_t TurnType;
 #define NO_TURN 0
 #define CLOCKWISE_TURN 1
 #define DOUBLE_TURN 2
