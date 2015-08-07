@@ -4,8 +4,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define NUM_CUBE_FACES 6
+#define NUM_CUBE_CORNERS 8
+#define NUM_CUBE_EDGES 12
+
 typedef int8_t CubeFaceId;
-enum CubeFaceId { NO_FACE = -1, U, L, F, R, B, D };
+enum CubeFaceId { U, L, F, R, B, D, NO_FACE = -1 };
 
 typedef int8_t TurnType;
 enum TurnType { NO_TURN, CLOCKWISE_TURN, DOUBLE_TURN, COUNTER_TURN };
@@ -25,5 +29,7 @@ void turnCubeFace(Cube cube, CubeFaceId face, TurnType type);
 void printCube(Cube cube);
 
 void printMove(CubeFaceId faceId, TurnType type);
+
+CubeFaceId getStickerFace(Cube cube, CubeFaceId curFaceId, int x, int y);
 
 #endif

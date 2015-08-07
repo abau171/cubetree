@@ -37,7 +37,7 @@ void printCube(Cube cube) {
 	}
 }
 
-char faceChars[6] = {'U', 'L', 'F', 'R', 'B', 'D'};
+static char faceChars[NUM_CUBE_FACES] = {'U', 'L', 'F', 'R', 'B', 'D'};
 
 void printMove(CubeFaceId faceId, TurnType type) {
 	putchar(faceChars[faceId]);

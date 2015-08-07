@@ -4,7 +4,32 @@
 #include "cube.h"
 #include "cube_internal.h"
 
-struct Cube solvedCube = {{{UFR, 0}, {UFL, 0}, {UBL, 0}, {UBR, 0}, {DFR, 0}, {DFL, 0}, {DBL, 0}, {DBR, 0}}, {{UF, 0}, {UL, 0}, {UB, 0}, {UR, 0}, {FR, 0}, {FL, 0}, {BL, 0}, {BR, 0}, {DF, 0}, {DL, 0}, {DB, 0}, {DR, 0}}};
+struct Cube solvedCube = {
+	.corners = {
+		{UFR, NO_ROT},
+		{UFL, NO_ROT},
+		{UBL, NO_ROT},
+		{UBR, NO_ROT},
+		{DFR, NO_ROT},
+		{DFL, NO_ROT},
+		{DBL, NO_ROT},
+		{DBR, NO_ROT}
+	},
+	.edges = {
+		{UF, NO_FLIP},
+		{UL, NO_FLIP},
+		{UB, NO_FLIP},
+		{UR, NO_FLIP},
+		{FR, NO_FLIP},
+		{FL, NO_FLIP},
+		{BL, NO_FLIP},
+		{BR, NO_FLIP},
+		{DF, NO_FLIP},
+		{DL, NO_FLIP},
+		{DB, NO_FLIP},
+		{DR, NO_FLIP}
+	}
+};
 
 Cube newCube() {
 	Cube cube = malloc(sizeof(struct Cube));

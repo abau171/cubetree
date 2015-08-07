@@ -5,7 +5,7 @@
 #include "algorithm.h"
 
 static struct PuzzleModule selectPuzzle() {
-	return firstPuzzleModuleNode->next->puzzleModule;
+	return firstPuzzleModuleNode->puzzleModule;
 }
 
 static void printAvailablePuzzles() {

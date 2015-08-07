@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "cube.h"
+
 typedef int8_t CubeCornerId;
 enum CubeCornerId { UFR, UFL, UBL, UBR, DFR, DFL, DBL, DBR };
 
@@ -30,10 +32,8 @@ struct Edge {
 };
 
 struct Cube {
-	struct Corner corners[8];
-	struct Edge edges[12];
+	struct Corner corners[NUM_CUBE_CORNERS];
+	struct Edge edges[NUM_CUBE_EDGES];
 };
-
-CubeFaceId getStickerFace(Cube cube, CubeFaceId curFaceId, int x, int y);
 
 #endif
