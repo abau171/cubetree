@@ -22,7 +22,7 @@ struct PuzzleModule makePuzzleModule(
 		MoveUndoer undoMove,
 		SolveChecker isSolved) {
 
-	char* moduleNameCopy = malloc(strlen(moduleName));
+	char* moduleNameCopy = malloc(strlen(moduleName) + sizeof(char));
 	strcpy(moduleNameCopy, moduleName);
 
 	return (struct PuzzleModule) {
