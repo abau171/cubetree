@@ -5,19 +5,10 @@
 #include <stdbool.h>
 
 typedef int8_t CubeFaceId;
-#define NO_FACE -1
-#define U 0
-#define L 1
-#define F 2
-#define R 3
-#define B 4
-#define D 5
+enum CubeFaceId { NO_FACE = -1, U, L, F, R, B, D }
 
 typedef int8_t TurnType;
-#define NO_TURN 0
-#define CLOCKWISE_TURN 1
-#define DOUBLE_TURN 2
-#define COUNTER_TURN 3
+enum TurnType { NO_TURN, CLOCKWISE_TURN, DOUBLE_TURN, COUNTER_TURN }
 
 typedef struct Cube* Cube;
 

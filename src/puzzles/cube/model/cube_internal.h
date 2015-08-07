@@ -4,39 +4,21 @@
 #include <stdint.h>
 
 typedef int8_t CubeCornerId;
-#define UFR 0
-#define UFL 1
-#define UBL 2
-#define UBR 3
-#define DFR 4
-#define DFL 5
-#define DBL 6
-#define DBR 7
+enum CubeCornerId { UFR, UFL, UBL, UBR, DFR, DFL, DBL, DBR }
 
 typedef int8_t CubeEdgeId;
-#define UF 0
-#define UL 1
-#define UB 2
-#define UR 3
-#define FR 4
-#define FL 5
-#define BL 6
-#define BR 7
-#define DF 8
-#define DL 9
-#define DB 10
-#define DR 11
+enum CubeEdgeId { UF, UL, UB, UR, FR, FL, BL, BR, DF, DL, DB, DR }
 
 typedef int8_t CubeCornerRotation;
-#define NO_ROT 0
-#define CLOCKWISE_ROT 1
-#define COUNTER_ROT 2
+enum CubeCornerRotation { NO_ROT, CLOCKWISE_ROT, COUNTER_ROT }
 
 #define wrapCornerRotation(rot) ((rot) % 3)
 
 typedef int8_t CubeEdgeFlip;
-#define NO_FLIP 0
-#define FLIP 1
+enum CubeEdgeFlip {
+	NO_FLIP,
+	FLIP
+}
 
 #define wrapEdgeFlip(flip) ((flip) % 2)
 
