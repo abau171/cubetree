@@ -38,7 +38,7 @@ void runSolverAlgorithm(struct PuzzleModule module) {
 	void* state = module.getStartState();
 	int maxDepth = -1;
 	bool solved = false;
-	while (!solved && maxDepth < 5) {
+	while (!solved) {
 		maxDepth++;
 		solved = searchDepth(module, state, maxDepth);
 	}
