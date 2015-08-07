@@ -6,7 +6,10 @@
 static int numPossibleMoves = 18;
 
 static void* getStartState() {
-	return newCube();
+	Cube cube = newCube();
+	shuffleCube(cube, 4);
+	printCube(cube);
+	return cube;
 }
 
 static bool pruneState(void* state) {
@@ -30,7 +33,7 @@ static void undoMove(void* state, int moveId) {
 	int newMoveId;
 	if (moveId < 6) newMoveId = moveId + 12;
 	else if (moveId >= 12) newMoveId = moveId - 12;
-	else moveId = moveId;
+	else newMoveId = moveId;
 	makeMove(state, newMoveId);
 }
 

@@ -4,15 +4,10 @@
 #include <stdbool.h>
 
 typedef void* (*StartStateGetter)();
-
 typedef bool (*StatePruner)(void* state);
-
 typedef bool (*MovePruner)(void* state, int moveId);
-
 typedef void (*MoveMaker)(void* state, int moveId);
-
 typedef void (*MoveUndoer)(void* state, int moveId);
-
 typedef bool (*SolveChecker)(void* state);
 
 struct PuzzleModule {
