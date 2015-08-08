@@ -1,5 +1,5 @@
-#ifndef CUBE_INTERNAL_H
-#define CUBE_INTERNAL_H
+#ifndef MODEL_H
+#define MODEL_H
 
 #include <stdint.h>
 

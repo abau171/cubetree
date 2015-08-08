@@ -1,5 +1,5 @@
-#include "cube.h"
-#include "cube_internal.h"
+#include "../cube.h"
+#include "../model.h"
 
 static CubeEdgeId edgeIdsByFace[6][4] = {
 	{UB, UL, UR, UF},

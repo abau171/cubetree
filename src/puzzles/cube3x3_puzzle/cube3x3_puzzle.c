@@ -1,13 +1,13 @@
 #include <stdbool.h>
 
 #include "../../puzzle_module.h"
-#include "model/cube.h"
+#include "cube3x3/cube.h"
 
 static int numPossibleMoves = 18;
 
 static void* getStartState() {
 	Cube cube = newCube();
-	shuffleCube(cube, 1);
+	shuffleCube(cube, 3);
 	printCube(cube);
 	return cube;
 }

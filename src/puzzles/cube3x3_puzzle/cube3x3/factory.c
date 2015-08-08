@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "cube.h"
-#include "cube_internal.h"
+#include "model.h"
 
 struct Cube solvedCube = {
 	.corners = {

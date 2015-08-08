@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "cube.h"
-#include "cube_internal.h"
+#include "../cube.h"
+#include "../model.h"
 
 static char stickers[] = {'B', 'O', 'W', 'R', 'Y', 'G'};
 

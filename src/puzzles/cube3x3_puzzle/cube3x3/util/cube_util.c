@@ -2,8 +2,8 @@
 #include <stdbool.h>
 #include <time.h>
 
-#include "cube.h"
-#include "cube_internal.h"
+#include "../cube.h"
+#include "../model.h"
 
 bool cubeIsSolved(Cube cube) {
 	for (int cornerId = 0; cornerId < 8; cornerId++) {
