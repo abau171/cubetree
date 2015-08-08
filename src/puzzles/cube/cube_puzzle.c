@@ -42,12 +42,12 @@ static bool isSolved(void* state) {
 }
 
 static void __attribute__((constructor)) registerPuzzle() {
-	registerPuzzleModule("Standard 3x3 Rubik's Cube",
+	registerPuzzleModule(makePuzzleModule("Standard 3x3 Rubik's Cube",
 		numPossibleMoves,
 		&getStartState,
 		&pruneState,
 		&pruneMove,
 		&makeMove,
 		&undoMove,
-		&isSolved);
+		&isSolved));
 }

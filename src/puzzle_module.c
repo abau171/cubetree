@@ -5,7 +5,15 @@
 
 PuzzleModuleNode firstPuzzleModuleNode = NULL;
 
-void registerPuzzleModule(char* moduleName,
+void registerPuzzleModule(struct PuzzleModule puzzleModule) {
+	PuzzleModuleNode newNode = malloc(sizeof(struct PuzzleModuleNode));
+	newNode->puzzleModule = puzzleModule;
+	newNode->next = firstPuzzleModuleNode;
+	firstPuzzleModuleNode = newNode;
+}
+
+struct PuzzleModule makePuzzleModule(
+		char* moduleName,
 		int numPossibleMoves,
 		StartStateGetter getStartState,
 		StatePruner pruneState,
@@ -13,19 +21,18 @@ void registerPuzzleModule(char* moduleName,
 		MoveMaker makeMove,
 		MoveUndoer undoMove,
 		SolveChecker isSolved) {
-	struct PuzzleModule newMod;
-	char* newModuleName = malloc(strlen(moduleName));
-	strcpy(newModuleName, moduleName);
-	newMod.moduleName = newModuleName;
-	newMod.numPossibleMoves = numPossibleMoves;
-	newMod.getStartState = getStartState;
-	newMod.pruneState = pruneState;
-	newMod.pruneMove = pruneMove;
-	newMod.makeMove = makeMove;
-	newMod.undoMove = undoMove;
-	newMod.isSolved = isSolved;
-	PuzzleModuleNode newNode = malloc(sizeof(struct PuzzleModuleNode));
-	newNode->puzzleModule = newMod;
-	newNode->next = firstPuzzleModuleNode;
-	firstPuzzleModuleNode = newNode;
+
+	char* moduleNameCopy = malloc(strlen(moduleName));
+	strcpy(moduleNameCopy, moduleName);
+
+	return (struct PuzzleModule) {
+		moduleNameCopy,
+		numPossibleMoves,
+		getStartState,
+		pruneState,
+		pruneMove,
+		makeMove,
+		undoMove,
+		isSolved
+	};
 }
