@@ -7,7 +7,7 @@ static int numPossibleMoves = 18;
 
 static void* getStartState() {
 	Cube cube = newCube();
-	shuffleCube(cube, 6);
+	shuffleCube(cube, 1);
 	printCube(cube);
 	return cube;
 }

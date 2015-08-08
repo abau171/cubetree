@@ -13,12 +13,38 @@ static CubeCornerId cornerQuarterRevolutions[6][4] = {
 	{6, 7, 3, 2},
 	{7, 6, 5, 4}};
 
-static void quarterRevolveCorners(Cube cube, CubeFaceId faceId, TurnType type) {
-	struct Corner tmp = cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][3]]];
-	cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][3]]] = cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][2]]];
-	cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][2]]] = cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][1]]];
-	cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][1]]] = cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][0]]];
-	cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][0]]] = tmp;
+static CubeCornerId getCornerIdFromFaceIndex(CubeFaceId faceId, int faceIndex) {
+	return cornerQuarterRevolutions[faceId][faceIndex];
+}
+
+static int getCornerIdInTurnSequence(int i, CubeFaceId faceId, bool clockwise) {
+	int faceIndex;
+	if (clockwise) {
+		faceIndex = i;
+	} else {
+		faceIndex = 3 - i;
+	}
+	return getCornerIdFromFaceIndex(faceId, faceIndex);
+}
+
+static struct Corner getCornerInTurnSequence(Cube cube, int i, CubeFaceId faceId, bool clockwise) {
+	CubeCornerId cornerId = getCornerIdInTurnSequence(i, faceId, clockwise);
+	return cube->corners[cornerId];
+}
+
+static void moveCorner(Cube cube, int source, int target, CubeFaceId faceId, bool clockwise) {
+	struct Corner sourceCorner = getCornerInTurnSequence(cube, source, faceId, clockwise);
+	int targetId = getCornerIdInTurnSequence(target, faceId, clockwise);
+	cube->corners[targetId] = sourceCorner;
+}
+
+static void quarterRevolveCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
+	struct Corner tmp = getCornerInTurnSequence(cube, 3, faceId, clockwise);
+	moveCorner(cube, 2, 3, faceId, clockwise);
+	moveCorner(cube, 1, 2, faceId, clockwise);
+	moveCorner(cube, 0, 1, faceId, clockwise);
+	int finalCornerId = getCornerIdInTurnSequence(0, faceId, clockwise);
+	cube->corners[finalCornerId] = tmp;
 }
 
 static CubeCornerRotation cornerQuarterRotations[6][4] = {
@@ -66,6 +92,7 @@ static void quarterFlipEdges(Cube cube, CubeFaceId faceId, TurnType type) {
 }
 
 void turnCubeFace(Cube cube, CubeFaceId faceId, TurnType type) {
+	bool clockwise = (type == CLOCKWISE_TURN);
 	switch (type) {
 	case DOUBLE_TURN:
 		turnCubeFace(cube, faceId, CLOCKWISE_TURN);
@@ -74,7 +101,7 @@ void turnCubeFace(Cube cube, CubeFaceId faceId, TurnType type) {
 	case CLOCKWISE_TURN:
 	case COUNTER_TURN:
 		quarterRotateCorners(cube, faceId, type);
-		quarterRevolveCorners(cube, faceId, type);
+		quarterRevolveCorners(cube, faceId, clockwise);
 		quarterFlipEdges(cube, faceId, type);
 		quarterRevolveEdges(cube, faceId, type);
 		break;
