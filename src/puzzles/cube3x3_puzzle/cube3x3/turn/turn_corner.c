@@ -58,6 +58,6 @@ static CubeCornerRotation cornerQuarterRotations[6][4] = {
 
 void quarterRotateCorners(Cube cube, CubeFaceId faceId, TurnType type) {
 	for (int i = 0; i < 4; i++) {
-		cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][i]]].rotation = wrapCornerRotation(cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][i]]].rotation + cornerQuarterRotations[faceId][seq[(type - 1) / 2][i]]);
+		cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][i]]].rotation = (cube->corners[cornerQuarterRevolutions[faceId][seq[(type - 1) / 2][i]]].rotation + cornerQuarterRotations[faceId][seq[(type - 1) / 2][i]]) % 3;
 	}
 }

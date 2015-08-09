@@ -6,6 +6,7 @@
 #include "cube.h"
 
 #define NUM_CUBE_CORNERS_PER_FACE 4
+#define NUM_CUBE_ROTATIONS_PER_CORNER 3
 
 #define wrapEdgeFlip(flip) ((flip) % 2)
 

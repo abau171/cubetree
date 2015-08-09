@@ -1,5 +1,6 @@
 #include "../cube.h"
 #include "../model.h"
+#include "../access.h"
 
 static CubeEdgeId edgeIdsByFace[6][4] = {
 	{UB_EDGE, UL_EDGE, UR_EDGE, UF_EDGE},
@@ -42,22 +43,10 @@ static CubeFaceId getEdgeStickerFace(Cube cube, CubeFaceId faceId, int edgeStick
 	return faceByEdge[fillEdgeId][fillFlip];
 }
 
-static CubeFaceId faceByCorner[8][3] = {
-	{U_FACE, R_FACE, F_FACE},
-	{U_FACE, F_FACE, L_FACE},
-	{U_FACE, L_FACE, B_FACE},
-	{U_FACE, B_FACE, R_FACE},
-	{D_FACE, F_FACE, R_FACE},
-	{D_FACE, L_FACE, F_FACE},
-	{D_FACE, B_FACE, L_FACE},
-	{D_FACE, R_FACE, B_FACE}
-};
-
 static CubeFaceId getCornerStickerFace(Cube cube, CubeFaceId faceId, CubeFaceCornerSlotId faceCornerSlotId) {
 	struct Corner fillCorner = getCornerByFace(cube, faceId, faceCornerSlotId);
-	CubeCornerRotation slotRotation = rotsByFace[faceId][faceCornerSlotId];
-	CubeCornerRotation fillRotation = wrapCornerRotation(3 + slotRotation - cube->corners[slotCornerId].rotation);
-	return faceByCorner[fillCornerId][fillRotation];
+	CubeCornerRotation stickerRotation = getCornerFaceRotation(cube, faceId, faceCornerSlotId);
+	return getFaceByCornerRotation(fillCorner.id, stickerRotation);
 }
 
 CubeFaceId getStickerFace(Cube cube, CubeFaceId faceId, int x, int y) {
