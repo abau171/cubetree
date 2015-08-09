@@ -6,28 +6,28 @@
 
 struct Cube solvedCube = {
 	.corners = {
-		{UFR, NO_ROT},
-		{UFL, NO_ROT},
-		{UBL, NO_ROT},
-		{UBR, NO_ROT},
-		{DFR, NO_ROT},
-		{DFL, NO_ROT},
-		{DBL, NO_ROT},
-		{DBR, NO_ROT}
+		{UFR_CORNER, NO_ROT},
+		{UFL_CORNER, NO_ROT},
+		{UBL_CORNER, NO_ROT},
+		{UBR_CORNER, NO_ROT},
+		{DFR_CORNER, NO_ROT},
+		{DFL_CORNER, NO_ROT},
+		{DBL_CORNER, NO_ROT},
+		{DBR_CORNER, NO_ROT}
 	},
 	.edges = {
-		{UF, NO_FLIP},
-		{UL, NO_FLIP},
-		{UB, NO_FLIP},
-		{UR, NO_FLIP},
-		{FR, NO_FLIP},
-		{FL, NO_FLIP},
-		{BL, NO_FLIP},
-		{BR, NO_FLIP},
-		{DF, NO_FLIP},
-		{DL, NO_FLIP},
-		{DB, NO_FLIP},
-		{DR, NO_FLIP}
+		{UF_EDGE, NO_FLIP},
+		{UL_EDGE, NO_FLIP},
+		{UB_EDGE, NO_FLIP},
+		{UR_EDGE, NO_FLIP},
+		{FR_EDGE, NO_FLIP},
+		{FL_EDGE, NO_FLIP},
+		{BL_EDGE, NO_FLIP},
+		{BR_EDGE, NO_FLIP},
+		{DF_EDGE, NO_FLIP},
+		{DL_EDGE, NO_FLIP},
+		{DB_EDGE, NO_FLIP},
+		{DR_EDGE, NO_FLIP}
 	}
 };
 

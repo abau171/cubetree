@@ -19,10 +19,10 @@ static void printStickerRow(Cube cube, CubeFaceId faceId, int y) {
 void printCube(Cube cube) {
 	for (int y = 0; y < 3; y++) {
 		printf("     ");
-		printStickerRow(cube, U, y);
+		printStickerRow(cube, U_FACE, y);
 		putchar('\n');
 	}
-	CubeFaceId faces[] = {L, F, R, B};
+	CubeFaceId faces[] = {L_FACE, F_FACE, R_FACE, B_FACE};
 	for (int y = 0; y < 3; y++) {
 		for (int i = 0; i < 4; i++) {
 			CubeFaceId faceId = faces[i];
@@ -32,7 +32,7 @@ void printCube(Cube cube) {
 	}
 	for (int y = 0; y < 3; y++) {
 		printf("     ");
-		printStickerRow(cube, D, y);
+		printStickerRow(cube, D_FACE, y);
 		putchar('\n');
 	}
 }

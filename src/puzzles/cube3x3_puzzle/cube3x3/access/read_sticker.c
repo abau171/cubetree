@@ -2,12 +2,13 @@
 #include "../model.h"
 
 static CubeEdgeId edgeIdsByFace[6][4] = {
-	{UB, UL, UR, UF},
-	{UL, BL, FL, DL},
-	{UF, FL, FR, DF},
-	{UR, FR, BR, DR},
-	{UB, BR, BL, DB},
-	{DF, DL, DR, DB}};
+	{UB_EDGE, UL_EDGE, UR_EDGE, UF_EDGE},
+	{UL_EDGE, BL_EDGE, FL_EDGE, DL_EDGE},
+	{UF_EDGE, FL_EDGE, FR_EDGE, DF_EDGE},
+	{UR_EDGE, FR_EDGE, BR_EDGE, DR_EDGE},
+	{UB_EDGE, BR_EDGE, BL_EDGE, DB_EDGE},
+	{DF_EDGE, DL_EDGE, DR_EDGE, DB_EDGE}
+};
 
 static CubeEdgeFlip flipsByFace[6][4] = {
 	{NO_FLIP, NO_FLIP, NO_FLIP, NO_FLIP},
@@ -15,21 +16,23 @@ static CubeEdgeFlip flipsByFace[6][4] = {
 	{FLIP, NO_FLIP, NO_FLIP, FLIP},
 	{FLIP, FLIP, FLIP, FLIP},
 	{FLIP, NO_FLIP, NO_FLIP, FLIP},
-	{NO_FLIP, NO_FLIP, NO_FLIP, NO_FLIP}};
+	{NO_FLIP, NO_FLIP, NO_FLIP, NO_FLIP}
+};
 
 static CubeFaceId faceByEdge[12][2] = {
-	{U, F},
-	{U, L},
-	{U, B},
-	{U, R},
-	{F, R},
-	{F, L},
-	{B, L},
-	{B, R},
-	{D, F},
-	{D, L},
-	{D, B},
-	{D, R}};
+	{U_FACE, F_FACE},
+	{U_FACE, L_FACE},
+	{U_FACE, B_FACE},
+	{U_FACE, R_FACE},
+	{F_FACE, R_FACE},
+	{F_FACE, L_FACE},
+	{B_FACE, L_FACE},
+	{B_FACE, R_FACE},
+	{D_FACE, F_FACE},
+	{D_FACE, L_FACE},
+	{D_FACE, B_FACE},
+	{D_FACE, R_FACE}
+};
 
 static CubeFaceId getEdgeStickerFace(Cube cube, CubeFaceId faceId, int edgeStickerId) {
 	CubeEdgeId slotEdgeId = edgeIdsByFace[faceId][edgeStickerId];
@@ -39,36 +42,20 @@ static CubeFaceId getEdgeStickerFace(Cube cube, CubeFaceId faceId, int edgeStick
 	return faceByEdge[fillEdgeId][fillFlip];
 }
 
-static CubeCornerId cornerIdsByFace[6][4] = {
-	{UBL, UBR, UFL, UFR},
-	{UBL, UFL, DBL, DFL},
-	{UFL, UFR, DFL, DFR},
-	{UFR, UBR, DFR, DBR},
-	{UBR, UBL, DBR, DBL},
-	{DFL, DFR, DBL, DBR}};
-
-static CubeCornerRotation rotsByFace[6][4] = {
-	{NO_ROT, NO_ROT, NO_ROT, NO_ROT},
-	{CLOCKWISE_ROT, COUNTER_ROT, COUNTER_ROT, CLOCKWISE_ROT},
-	{CLOCKWISE_ROT, COUNTER_ROT, COUNTER_ROT, CLOCKWISE_ROT},
-	{CLOCKWISE_ROT, COUNTER_ROT, COUNTER_ROT, CLOCKWISE_ROT},
-	{CLOCKWISE_ROT, COUNTER_ROT, COUNTER_ROT, CLOCKWISE_ROT},
-	{NO_ROT, NO_ROT, NO_ROT, NO_ROT}};
-
 static CubeFaceId faceByCorner[8][3] = {
-	{U, R, F},
-	{U, F, L},
-	{U, L, B},
-	{U, B, R},
-	{D, F, R},
-	{D, L, F},
-	{D, B, L},
-	{D, R, B}};
+	{U_FACE, R_FACE, F_FACE},
+	{U_FACE, F_FACE, L_FACE},
+	{U_FACE, L_FACE, B_FACE},
+	{U_FACE, B_FACE, R_FACE},
+	{D_FACE, F_FACE, R_FACE},
+	{D_FACE, L_FACE, F_FACE},
+	{D_FACE, B_FACE, L_FACE},
+	{D_FACE, R_FACE, B_FACE}
+};
 
-static CubeFaceId getCornerStickerFace(Cube cube, CubeFaceId faceId, int cornerStickerId) {
-	CubeCornerId slotCornerId = cornerIdsByFace[faceId][cornerStickerId];
-	CubeCornerId fillCornerId = cube->corners[slotCornerId].id;
-	CubeCornerRotation slotRotation = rotsByFace[faceId][cornerStickerId];
+static CubeFaceId getCornerStickerFace(Cube cube, CubeFaceId faceId, CubeFaceCornerSlotId faceCornerSlotId) {
+	struct Corner fillCorner = getCornerByFace(cube, faceId, faceCornerSlotId);
+	CubeCornerRotation slotRotation = rotsByFace[faceId][faceCornerSlotId];
 	CubeCornerRotation fillRotation = wrapCornerRotation(3 + slotRotation - cube->corners[slotCornerId].rotation);
 	return faceByCorner[fillCornerId][fillRotation];
 }

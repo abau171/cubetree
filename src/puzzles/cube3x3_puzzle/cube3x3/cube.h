@@ -9,7 +9,7 @@
 #define NUM_CUBE_EDGES 12
 
 typedef int8_t CubeFaceId;
-enum CubeFaceId { U, L, F, R, B, D, NO_FACE = -1 };
+enum CubeFaceId { U_FACE, L_FACE, F_FACE, R_FACE, B_FACE, D_FACE, NO_FACE = -1 };
 
 typedef int8_t TurnType;
 enum TurnType { NO_TURN, CLOCKWISE_TURN, DOUBLE_TURN, COUNTER_TURN };
