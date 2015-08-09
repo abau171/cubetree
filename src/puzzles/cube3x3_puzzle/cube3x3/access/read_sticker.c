@@ -43,10 +43,8 @@ static CubeFaceId getEdgeStickerFace(Cube cube, CubeFaceId faceId, int edgeStick
 	return faceByEdge[fillEdgeId][fillFlip];
 }
 
-static CubeFaceId getCornerStickerFace(Cube cube, CubeFaceId faceId, CubeFaceCornerSlotId faceCornerSlotId) {
-	struct Corner fillCorner = getCornerByFace(cube, faceId, faceCornerSlotId);
-	CubeCornerRotation stickerRotation = getCornerFaceRotation(cube, faceId, faceCornerSlotId);
-	return getFaceByCornerRotation(fillCorner.id, stickerRotation);
+static CubeFaceId getCornerStickerFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId cornerOnFaceId) {
+	return getCornerFaceletOnFace(cube, faceId, cornerOnFaceId);
 }
 
 CubeFaceId getStickerFace(Cube cube, CubeFaceId faceId, int x, int y) {
@@ -57,6 +55,7 @@ CubeFaceId getStickerFace(Cube cube, CubeFaceId faceId, int x, int y) {
 		return getEdgeStickerFace(cube, faceId, edgeStickerId);
 	} else {
 		int cornerStickerId = (x / 2) + y;
-		return getCornerStickerFace(cube, faceId, cornerStickerId);
+		int cornerOnFaceId = ((int[]) {2, 3, 1, 0})[cornerStickerId];
+		return getCornerStickerFace(cube, faceId, cornerOnFaceId);
 	}
 }

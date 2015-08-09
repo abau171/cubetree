@@ -8,16 +8,20 @@ struct Corner getCorner(Cube cube, CubeCornerId cornerSlotId);
 
 void setCorner(Cube cube, CubeCornerId cornerSlotId, struct Corner corner);
 
+struct Corner getRotatedCorner(struct Corner corner, CubeCornerRotation dRotation);
+
 void rotateCorner(Cube cube, CubeCornerId cornerSlotId, CubeCornerRotation dRotation);
 
-CubeCornerId getCornerSlotIdByFace(CubeFaceId faceId, CubeFaceCornerSlotId faceCornerSlotId);
+CubeCornerId getCornerSlotIdOnFace(CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
 
-struct Corner getCornerByFace(Cube cube, CubeFaceId faceId, CubeFaceCornerSlotId faceCornerSlotId);
+struct Corner getCornerOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
 
-CubeCornerRotation getCornerSlotFaceRotation(CubeFaceId faceId, CubeFaceCornerSlotId faceCornerSlotId);
+CubeCornerRotation getCornerSlotFaceRotation(CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
 
-CubeCornerRotation getCornerFaceRotation(Cube cube, CubeFaceId faceId, CubeFaceCornerSlotId faceCornerSlotId);
+CubeCornerRotation getCornerFaceletRotation(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
 
-CubeFaceId getFaceByCornerRotation(CubeCornerId cornerId, CubeCornerRotation rotation);
+CubeFaceId getFaceletByCornerRotation(CubeCornerId cornerId, CubeCornerRotation rotation);
+
+CubeFaceId getCornerFaceletOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
 
 #endif

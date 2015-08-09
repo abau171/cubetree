@@ -83,12 +83,12 @@ enum CubeEdgeFlip { NO_FLIP, FLIP };
  * down.  The remaining 4 faces are oriented so the up face points up and the
  * down face points down.
  */
-typedef int8_t CubeFaceCornerSlotId;
-enum CubeFaceCornerSlotId {
-	DR_FCS,
-	DL_FCS,
-	UL_FCS,
-	UR_FCS
+typedef int8_t CubeCornerOnFaceId;
+enum CubeCornerOnFaceId {
+	DR_COF,
+	DL_COF,
+	UL_COF,
+	UR_COF
 };
 
 /*
