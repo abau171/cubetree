@@ -16,17 +16,13 @@ void rotateCorner(Cube cube, CubeCornerId cornerSlotId, CubeCornerRotation dRota
 
 // Corner Face Access
 
-CubeCornerId getCornerSlotIdOnFace(CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
+struct Corner getCornerSlotOnFace(CubeFaceId faceId, CubeCornerOnFaceId cornerOnFaceId);
 
-struct Corner getCornerOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
+CubeFaceId getFaceletOnCorner(CubeCornerId cornerId, CubeCornerRotation rotation);
 
-CubeCornerRotation getCornerSlotFaceRotation(CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
+struct Corner getCornerOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId cornerOnFaceId);
 
-CubeCornerRotation getCornerFaceletRotation(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
-
-CubeFaceId getFaceletByCornerRotation(CubeCornerId cornerId, CubeCornerRotation rotation);
-
-CubeFaceId getCornerFaceletOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId);
+CubeFaceId getCornerFaceletOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId cornerOnFaceId);
 
 // Edge Access
 
@@ -37,5 +33,15 @@ void setEdge(Cube cube, CubeEdgeId edgeSlotId, struct Edge edge);
 struct Edge getFlippedEdge(struct Edge edge, CubeEdgeFlip dFlip);
 
 void flipEdge(Cube cube, CubeEdgeId edgeSlotId, CubeEdgeFlip dFlip);
+
+// Edge Face Access
+
+struct Edge getEdgeSlotOnFace(CubeFaceId faceId, CubeEdgeOnFaceId edgeOnFaceId);
+
+CubeFaceId getFaceletOnEdge(CubeEdgeId edgeId, CubeEdgeFlip flip);
+
+struct Edge getEdgeOnFace(Cube cube, CubeFaceId faceId, CubeEdgeOnFaceId edgeOnFaceId);
+
+CubeFaceId getEdgeFaceletOnFace(Cube cube, CubeFaceId faceId, CubeEdgeOnFaceId edgeOnFaceId);
 
 #endif

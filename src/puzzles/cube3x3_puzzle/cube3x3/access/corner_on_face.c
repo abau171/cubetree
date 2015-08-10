@@ -18,14 +18,14 @@ static struct Corner cornerSlotsOnFace[NUM_CUBE_FACES][NUM_CUBE_CORNERS_PER_FACE
  * Lookup table mapping corner ids and slot rotations to the facelet at that rotation on the corner piece.
  */
 static CubeFaceId cornerFacelets[NUM_CUBE_CORNERS][NUM_CUBE_ROTATIONS_PER_CORNER] = {
-	{ U_FACE, F_FACE, R_FACE },
-	{ U_FACE, L_FACE, F_FACE },
-	{ U_FACE, B_FACE, L_FACE },
-	{ U_FACE, R_FACE, B_FACE },
-	{ D_FACE, R_FACE, F_FACE },
-	{ D_FACE, F_FACE, L_FACE },
-	{ D_FACE, L_FACE, B_FACE },
-	{ D_FACE, B_FACE, R_FACE }
+	{U_FACE, F_FACE, R_FACE},
+	{U_FACE, L_FACE, F_FACE},
+	{U_FACE, B_FACE, L_FACE},
+	{U_FACE, R_FACE, B_FACE},
+	{D_FACE, R_FACE, F_FACE},
+	{D_FACE, F_FACE, L_FACE},
+	{D_FACE, L_FACE, B_FACE},
+	{D_FACE, B_FACE, R_FACE}
 };
 
 /*
@@ -52,8 +52,8 @@ CubeFaceId getFaceletOnCorner(CubeCornerId cornerId, CubeCornerRotation rotation
  * 
  * The corner's rotation is changed so that the given face is considered the dominant face, but the corner's dominant facelet remains the same.
  */
-struct Corner getCornerOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId) {
-	struct Corner cornerSlot = getCornerSlotOnFace(faceId, faceCornerSlotId);
+struct Corner getCornerOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId cornerOnFaceId) {
+	struct Corner cornerSlot = getCornerSlotOnFace(faceId, cornerOnFaceId);
 	struct Corner corner = getCorner(cube, cornerSlot.id);
 	struct Corner cornerOnFace = getRotatedCorner(corner, cornerSlot.rotation);
 	return cornerOnFace;
@@ -62,8 +62,8 @@ struct Corner getCornerOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId f
 /*
  * Gets the facelet at a corner position on a face.
  */
-CubeFaceId getCornerFaceletOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId faceCornerSlotId) {
-	struct Corner cornerOnFace = getCornerOnFace(cube, faceId, faceCornerSlotId);
+CubeFaceId getCornerFaceletOnFace(Cube cube, CubeFaceId faceId, CubeCornerOnFaceId cornerOnFaceId) {
+	struct Corner cornerOnFace = getCornerOnFace(cube, faceId, cornerOnFaceId);
 	CubeFaceId faceletId = getFaceletOnCorner(cornerOnFace.id, cornerOnFace.rotation);
 	return faceletId;
 }

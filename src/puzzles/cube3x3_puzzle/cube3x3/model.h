@@ -93,6 +93,14 @@ enum CubeCornerOnFaceId {
 	UR_COF
 };
 
+typedef int8_t CubeEdgeOnFaceId;
+enum CubeEdgeOnFaceId {
+	D_EOF,
+	L_EOF,
+	U_EOF,
+	R_EOF
+};
+
 /*
  * Structure for a corner.  Each one has an Id and a current rotation.
  */
