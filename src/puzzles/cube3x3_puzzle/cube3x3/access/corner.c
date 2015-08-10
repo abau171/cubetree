@@ -25,7 +25,7 @@ struct Corner getRotatedCorner(struct Corner corner, CubeCornerRotation dRotatio
 }
 
 /*
- * Rotates a corner in a direction.
+ * Rotates a corner in a cube.
  */
 void rotateCorner(Cube cube, CubeCornerId cornerSlotId, CubeCornerRotation dRotation) {
 	struct Corner corner = getCorner(cube, cornerSlotId);
