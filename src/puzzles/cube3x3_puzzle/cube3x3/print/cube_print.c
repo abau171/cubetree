@@ -2,6 +2,7 @@
 
 #include "../cube.h"
 #include "../model.h"
+#include "../access.h"
 
 static char stickers[] = {'B', 'O', 'W', 'R', 'Y', 'G'};
 
@@ -11,7 +12,7 @@ static void printFaceStickerColor(CubeFaceId faceId) {
 
 static void printStickerRow(Cube cube, CubeFaceId faceId, int y) {
 	for (int x = 0; x < 3; x++) {
-		printFaceStickerColor(getStickerFace(cube, faceId, x, y));
+		printFaceStickerColor(getFacelet(cube, faceId, x, y));
 		if (x < 2) putchar(' ');
 	}
 }

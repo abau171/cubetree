@@ -44,4 +44,8 @@ struct Edge getEdgeOnFace(Cube cube, CubeFaceId faceId, CubeEdgeOnFaceId edgeOnF
 
 CubeFaceId getEdgeFaceletOnFace(Cube cube, CubeFaceId faceId, CubeEdgeOnFaceId edgeOnFaceId);
 
+// Face Access
+
+CubeFaceId getFacelet(Cube cube, CubeFaceId faceId, int x, int y);
+
 #endif
