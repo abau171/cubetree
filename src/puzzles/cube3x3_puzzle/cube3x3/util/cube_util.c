@@ -22,7 +22,7 @@ void shuffleCube(Cube cube, int numTurns) {
 			nextFaceId = (rand() % 6);
 		} while (nextFaceId == lastFaceId);
 		TurnType type = (rand() % 3) + 1;
-		printMove(nextFaceId, type);
+		printTurn(nextFaceId, type, true);
 		turnCubeFace(cube, nextFaceId, type);
 		lastFaceId = nextFaceId;
 	}

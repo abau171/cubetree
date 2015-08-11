@@ -29,7 +29,7 @@ void turnCubeFace(Cube cube, CubeFaceId face, TurnType type);
 
 void printCube(Cube cube);
 
-void printMove(CubeFaceId faceId, TurnType type);
+void printTurn(CubeFaceId faceId, TurnType type, bool includeNewline);
 
 CubeFaceId getStickerFace(Cube cube, CubeFaceId curFaceId, int x, int y);
 
