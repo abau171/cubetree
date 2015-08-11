@@ -4,6 +4,9 @@
 #include "cube.h"
 #include "model.h"
 
+/*
+ * Solved state of a cube used for initializing new cubes.
+ */
 struct Cube solvedCube = {
 	.corners = {
 		{UFR_CORNER, NO_ROT},
@@ -31,12 +34,17 @@ struct Cube solvedCube = {
 	}
 };
 
+/*
+ * Generates a new cube.
+ */
 Cube newCube() {
 	Cube cube = malloc(sizeof(struct Cube));
 	*cube = solvedCube;
 	return cube;
 }
 
+/*
+ * Frees a cube.*/
 void freeCube(Cube cube) {
 	free(cube);
 }
