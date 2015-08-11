@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define DIM_CUBE 3
 #define NUM_CUBE_FACES 6
 #define NUM_CUBE_CORNERS 8
 #define NUM_CUBE_EDGES 12
