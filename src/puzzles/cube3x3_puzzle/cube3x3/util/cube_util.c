@@ -14,6 +14,7 @@ bool cubeIsSolved(Cube cube) {
 }
 
 void shuffleCube(Cube cube, int numTurns) {
+	turnCubeFace(cube, 3, 1);
 	srand(time(NULL));
 	CubeFaceId lastFaceId = NO_FACE;
 	for (int i = 0; i < numTurns; i++) {
