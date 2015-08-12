@@ -5,14 +5,9 @@
 #include "../cube.h"
 #include "../model.h"
 
-bool cubeIsSolved(Cube cube) {
-	for (int cornerId = 0; cornerId < 8; cornerId++) {
-		if (cube->corners[cornerId].id != cornerId) return false;
-		if (cube->corners[cornerId].rotation != 0) return false;
-	}
-	return true;
-}
-
+/*
+ * Shuffles a cube a specific number of moves from its current state.
+ */
 void shuffleCube(Cube cube, int numTurns) {
 	srand(time(NULL));
 	CubeFaceId lastFaceId = NO_FACE;
