@@ -3,7 +3,7 @@
 
 void quarterRevolveCorners(Cube cube, CubeFaceId faceId, bool clockwise);
 
-void quarterRotateCorners(Cube cube, CubeFaceId faceId, TurnType type);
+void quarterRotateCorners(Cube cube, CubeFaceId faceId, bool clockwise);
 
 void quarterRevolveEdges(Cube cube, CubeFaceId faceId, TurnType type);
 
