@@ -1,5 +1,6 @@
 #include "../cube.h"
 #include "../model.h"
+#include "../access.h"
 #include "turn_internal.h"
 
 static int seq[2][4] = {
@@ -15,23 +16,16 @@ static CubeCornerId cornerQuarterRevolutions[6][4] = {
 	{7, 6, 5, 4}};
 
 /*
- * Gets a corner by a face it belongs to and the location on that face represented by an index.
- */
-static CubeCornerId getCornerIdFromFaceIndex(CubeFaceId faceId, int faceIndex) {
-	return cornerQuarterRevolutions[faceId][faceIndex];
-}
-
-/*
  * Gets a corner id by a face it belongs to and its index in a turn sequence.
  */
 static CubeCornerId getCornerIdInTurnSequence(int i, CubeFaceId faceId, bool clockwise) {
-	int faceIndex;
+	CubeCornerOnFaceId cornerOnFaceId;
 	if (clockwise) {
-		faceIndex = i;
+		cornerOnFaceId = i;
 	} else {
-		faceIndex = 3 - i;
+		cornerOnFaceId = 3 - i;
 	}
-	return getCornerIdFromFaceIndex(faceId, faceIndex);
+	return getCornerSlotOnFace(faceId, cornerOnFaceId).id;
 }
 
 /*
