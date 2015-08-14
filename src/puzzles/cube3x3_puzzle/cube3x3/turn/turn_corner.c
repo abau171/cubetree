@@ -47,13 +47,21 @@ void quarterRevolveCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
 	setCorner(cube, finalCornerId, tmp);
 }
 
+static void rotateCornerAlongFace(Cube cube, int source, int target, CubeFaceId faceId, bool clockwise) {
+	struct Corner sourceCorner = getCornerInTurnSequence(cube, source, faceId, clockwise);
+	CubeCornerRotation sourceSlotRotation = getCornerSlotInTurnSequence(source, faceId, clockwise).rotation;
+	CubeCornerRotation targetSlotRotation = getCornerSlotInTurnSequence(target, faceId, clockwise).rotation;
+	CubeCornerRotation dRotation = 3 - targetSlotRotation + sourceSlotRotation;
+	printf("3 - %d + %d = %d\n", targetSlotRotation, sourceSlotRotation, dRotation);
+	rotateCorner(cube, sourceCorner.id, dRotation);
+}
+
 /*
  * Rotates the 4 corners of a face to correspond with a face turn.
  */
 void quarterRotateCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
 	for (int i = 0; i < NUM_CUBE_CORNERS_PER_FACE; i++) {
-		struct Corner cornerSlot = getCornerSlotInTurnSequence(i, faceId, clockwise);
-		CubeCornerRotation dRotation = 3 - cornerSlot.rotation;
-		rotateCorner(cube, cornerSlot.id, dRotation);
+		int j = (i + 1) % NUM_CUBE_CORNERS_PER_FACE;
+		rotateCornerAlongFace(cube, i, j, faceId, clockwise);
 	}
 }
