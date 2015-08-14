@@ -1,45 +1,49 @@
 #include "../cube.h"
 #include "../model.h"
+#include "../access.h"
 #include "turn_internal.h"
 
-static int seq[2][4] = {
-	{0, 1, 2, 3},
-	{3, 2, 1, 0}};
-
-static CubeEdgeId edgeQuarterRevolutions[6][4] = {
-	{0, 1, 2, 3},
-	{9, 6, 1, 5},
-	{8, 5, 0, 4},
-	{11, 4, 3, 7},
-	{10, 7, 2, 6},
-	{10, 9, 8, 11}};
-
-/*
- * Revolves the 4 edges on a face in a given direction, but does not change their flip state.
- */
-void quarterRevolveEdges(Cube cube, CubeFaceId faceId, TurnType type) {
-	struct Edge tmp = cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][3]]];
-	cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][3]]] = cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][2]]];
-	cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][2]]] = cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][1]]];
-	cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][1]]] = cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][0]]];
-	cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][0]]] = tmp;
+static struct Edge getEdgeSlotInTurnSequence(int i, CubeFaceId faceId, bool clockwise) {
+	CubeEdgeOnFaceId edgeOnFaceId;
+	if (clockwise) {
+		edgeOnFaceId = i;
+	} else {
+		edgeOnFaceId = 3 - i;
+	}
+	return getEdgeSlotOnFace(faceId, edgeOnFaceId);
 }
 
-static CubeEdgeFlip edgeQuarterFlips[6][4] = {
-	{NO_FLIP, NO_FLIP, NO_FLIP, NO_FLIP},
-	{NO_FLIP, NO_FLIP, NO_FLIP, NO_FLIP},
-	{FLIP, FLIP, FLIP, FLIP},
-	{NO_FLIP, NO_FLIP, NO_FLIP, NO_FLIP},
-	{FLIP, FLIP, FLIP, FLIP},
-	{NO_FLIP, NO_FLIP, NO_FLIP, NO_FLIP}};
+static struct Edge getEdgeInTurnSequence(Cube cube, int i, CubeFaceId faceId, bool clockwise) {
+	CubeEdgeId edgeSlotId = getEdgeSlotInTurnSequence(i, faceId, clockwise).id;
+	return getEdge(cube, edgeSlotId);
+}
 
-/*
- * Flips the 4 corners of a face to correspond with a face turn.
- * 
- * The only acceptable turn types are CLOCKWISE_TURN and COUNTER_TURN.  All others produce undefined behavior.
- */
-void quarterFlipEdges(Cube cube, CubeFaceId faceId, TurnType type) {
-	for (int i = 0; i < 4; i++) {
-		cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][i]]].flip = wrapEdgeFlip(cube->edges[edgeQuarterRevolutions[faceId][seq[(type - 1) / 2][i]]].flip + edgeQuarterFlips[faceId][seq[(type - 1) / 2][i]]);
+static void moveEdge(Cube cube, int source, int target, CubeFaceId faceId, bool clockwise) {
+	struct Edge sourceEdge = getEdgeInTurnSequence(cube, source, faceId, clockwise);
+	CubeEdgeId targetId = getEdgeSlotInTurnSequence(target, faceId, clockwise).id;
+	setEdge(cube, targetId, sourceEdge);
+}
+
+void quarterRevolveEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
+	struct Edge tmp = getEdgeInTurnSequence(cube, 3, faceId, clockwise);
+	moveEdge(cube, 2, 3, faceId, clockwise);
+	moveEdge(cube, 1, 2, faceId, clockwise);
+	moveEdge(cube, 0, 1, faceId, clockwise);
+	CubeEdgeId finalEdgeId = getEdgeSlotInTurnSequence(0, faceId, clockwise).id;
+	setEdge(cube, finalEdgeId, tmp);
+}
+
+static void flipEdgeAlongFace(Cube cube, int source, int target, CubeFaceId faceId, bool clockwise) {
+	struct Edge sourceEdge = getEdgeInTurnSequence(cube, source, faceId, clockwise);
+	CubeEdgeFlip sourceSlotFlip = getEdgeSlotInTurnSequence(source, faceId, clockwise).flip;
+	CubeEdgeFlip targetSlotFlip = getEdgeSlotInTurnSequence(target, faceId, clockwise).flip;
+	CubeEdgeFlip dFlip = 2 + targetSlotFlip - sourceSlotFlip;
+	flipEdge(cube, sourceEdge.id, dFlip);
+}
+
+void quarterFlipEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
+	for (int i = 0; i < NUM_CUBE_EDGES_PER_FACE; i++) {
+		int j = (i + 1) % NUM_CUBE_EDGES_PER_FACE;
+		flipEdgeAlongFace(cube, i, j, faceId, clockwise);
 	}
 }
