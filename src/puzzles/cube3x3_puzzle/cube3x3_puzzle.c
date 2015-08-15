@@ -38,8 +38,7 @@ static void undoMove(void* state, int moveId) {
 }
 
 static bool isSolved(void* state) {
-	return true;
-//	return cubeIsSolved(state);
+	return cubeIsSolved(state);
 }
 
 static void __attribute__((constructor)) registerPuzzle() {

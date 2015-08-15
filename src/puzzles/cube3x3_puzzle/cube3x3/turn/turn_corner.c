@@ -51,7 +51,6 @@ void quarterRevolveCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
  * Rotates a corner that will be revolved along a face from one given slot to another given slot.
  */
 static void rotateCornerAlongFace(Cube cube, int source, int target, CubeFaceId faceId, bool clockwise) {
-	struct Corner sourceCorner = getCornerInTurnSequence(cube, source, faceId, clockwise);
 	struct Corner sourceSlot = getCornerSlotInTurnSequence(source, faceId, clockwise);
 	struct Corner targetSlot = getCornerSlotInTurnSequence(target, faceId, clockwise);
 	CubeCornerRotation dRotation = 3 - targetSlot.rotation + sourceSlot.rotation;

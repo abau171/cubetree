@@ -51,7 +51,6 @@ void quarterRevolveEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
  * Flips an edge that will be revolved along a ace from one given slot to another.
  */
 static void flipEdgeAlongFace(Cube cube, int source, int target, CubeFaceId faceId, bool clockwise) {
-	struct Edge sourceEdge = getEdgeInTurnSequence(cube, source, faceId, clockwise);
 	struct Edge sourceSlot = getEdgeSlotInTurnSequence(source, faceId, clockwise);
 	struct Edge targetSlot = getEdgeSlotInTurnSequence(target, faceId, clockwise);
 	CubeEdgeFlip dFlip = 2 + targetSlot.flip - sourceSlot.flip;
