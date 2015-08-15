@@ -35,10 +35,10 @@ void quarterRevolveEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
 
 static void flipEdgeAlongFace(Cube cube, int source, int target, CubeFaceId faceId, bool clockwise) {
 	struct Edge sourceEdge = getEdgeInTurnSequence(cube, source, faceId, clockwise);
-	CubeEdgeFlip sourceSlotFlip = getEdgeSlotInTurnSequence(source, faceId, clockwise).flip;
-	CubeEdgeFlip targetSlotFlip = getEdgeSlotInTurnSequence(target, faceId, clockwise).flip;
-	CubeEdgeFlip dFlip = 2 + targetSlotFlip - sourceSlotFlip;
-	flipEdge(cube, sourceEdge.id, dFlip);
+	struct Edge sourceSlot = getEdgeSlotInTurnSequence(source, faceId, clockwise);
+	struct Edge targetSlot = getEdgeSlotInTurnSequence(target, faceId, clockwise);
+	CubeEdgeFlip dFlip = 2 + targetSlot.flip - sourceSlot.flip;
+	flipEdge(cube, sourceSlot.id, dFlip);
 }
 
 void quarterFlipEdges(Cube cube, CubeFaceId faceId, bool clockwise) {

@@ -49,11 +49,10 @@ void quarterRevolveCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
 
 static void rotateCornerAlongFace(Cube cube, int source, int target, CubeFaceId faceId, bool clockwise) {
 	struct Corner sourceCorner = getCornerInTurnSequence(cube, source, faceId, clockwise);
-	CubeCornerRotation sourceSlotRotation = getCornerSlotInTurnSequence(source, faceId, clockwise).rotation;
-	CubeCornerRotation targetSlotRotation = getCornerSlotInTurnSequence(target, faceId, clockwise).rotation;
-	CubeCornerRotation dRotation = 3 - targetSlotRotation + sourceSlotRotation;
-	printf("3 - %d + %d = %d\n", targetSlotRotation, sourceSlotRotation, dRotation);
-	rotateCorner(cube, sourceCorner.id, dRotation);
+	struct Corner sourceSlot = getCornerSlotInTurnSequence(source, faceId, clockwise);
+	struct Corner targetSlot = getCornerSlotInTurnSequence(target, faceId, clockwise);
+	CubeCornerRotation dRotation = 3 - targetSlot.rotation + sourceSlot.rotation;
+	rotateCorner(cube, sourceSlot.id, dRotation);
 }
 
 /*
