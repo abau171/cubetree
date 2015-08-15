@@ -7,7 +7,7 @@ static int numPossibleMoves = 18;
 
 static void* getStartState() {
 	Cube cube = newCube();
-	shuffleCube(cube, 3);
+	shuffleCube(cube, 5);
 	printCube(cube);
 	return cube;
 }
@@ -42,12 +42,15 @@ static bool isSolved(void* state) {
 }
 
 static void __attribute__((constructor)) registerPuzzle() {
-	registerPuzzleModule("Standard 3x3 Rubik's Cube",
+	struct PuzzleModule puzzleModule = makePuzzleModule(
+		"Standard 3x3 Rubik's Cube",
 		numPossibleMoves,
 		&getStartState,
 		&pruneState,
 		&pruneMove,
 		&makeMove,
 		&undoMove,
-		&isSolved);
+		&isSolved
+	);
+	registerPuzzleModule(puzzleModule);
 }

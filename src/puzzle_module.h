@@ -28,6 +28,8 @@ typedef struct PuzzleModuleNode {
 
 extern PuzzleModuleNode firstPuzzleModuleNode;
 
-void registerPuzzleModule(char* moduleName, int numPossibleMoves, StartStateGetter getStartState, StatePruner pruneState, MovePruner pruneMove, MoveMaker makeMove, MoveUndoer undoMove, SolveChecker isSolved);
+void registerPuzzleModule(struct PuzzleModule puzzleModule);
+
+struct PuzzleModule makePuzzleModule(char* moduleName, int numPossibleMoves, StartStateGetter getStartState, StatePruner pruneState, MovePruner pruneMove, MoveMaker makeMove, MoveUndoer undoMove, SolveChecker isSolved);
 
 #endif
