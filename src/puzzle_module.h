@@ -9,6 +9,7 @@ typedef bool (*MovePruner)(void* state, int moveId);
 typedef void (*MoveMaker)(void* state, int moveId);
 typedef void (*MoveUndoer)(void* state, int moveId);
 typedef bool (*SolveChecker)(void* state);
+typedef void (*MovePrinter)(int moveId);
 
 struct PuzzleModule {
 	char* moduleName;
@@ -19,6 +20,7 @@ struct PuzzleModule {
 	MoveMaker makeMove;
 	MoveUndoer undoMove;
 	SolveChecker isSolved;
+	MovePrinter printMove;
 };
 
 typedef struct PuzzleModuleNode {
@@ -30,6 +32,15 @@ extern PuzzleModuleNode firstPuzzleModuleNode;
 
 void registerPuzzleModule(struct PuzzleModule puzzleModule);
 
-struct PuzzleModule makePuzzleModule(char* moduleName, int numPossibleMoves, StartStateGetter getStartState, StatePruner pruneState, MovePruner pruneMove, MoveMaker makeMove, MoveUndoer undoMove, SolveChecker isSolved);
+struct PuzzleModule makePuzzleModule(
+	char* moduleName,
+	int numPossibleMoves,
+	StartStateGetter getStartState,
+	StatePruner pruneState,
+	MovePruner pruneMove,
+	MoveMaker makeMove,
+	MoveUndoer undoMove,
+	SolveChecker isSolved,
+	MovePrinter printMove);
 
 #endif

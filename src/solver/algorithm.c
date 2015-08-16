@@ -15,7 +15,6 @@ static Solution searchAllMoves(struct PuzzleModule module, void* state, int maxD
 		module.makeMove(state, moveId);
 		Solution solution = searchDepthRec(module, state, maxDepth, curDepth + 1);
 		if (solution != NULL) {
-			// moveId should be added to solution move stack here
 			solution = pushSolution(solution, moveId);
 			return solution;
 		}
@@ -57,7 +56,7 @@ void runSolverAlgorithm(struct PuzzleModule module) {
 	Solution solution = solvePuzzle(module, state);
 	Solution curSol = solution;
 	while (curSol->moveId != -1) {
-		printf("%d\n", curSol->moveId);
+		module.printMove(curSol->moveId);
 		curSol = curSol->next;
 	}
 }

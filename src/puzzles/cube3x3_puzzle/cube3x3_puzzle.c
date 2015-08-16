@@ -1,13 +1,23 @@
 #include <stdbool.h>
 
 #include "../../puzzle_module.h"
+#include "cube3x3_puzzle.h"
 #include "cube3x3/cube.h"
 
-static int numPossibleMoves = 18;
+#define SHUFFLE_TURNS 5
+
+#define NUM_POSSIBLE_MOVES 18
+
+static struct Move getMove(int moveId) {
+	struct Move move;
+	move.faceId = (moveId % 6);
+	move.type = (moveId - move.faceId) / 6 + 1;
+	return move;
+}
 
 static void* getStartState() {
 	Cube cube = newCube();
-	shuffleCube(cube, 5);
+	shuffleCube(cube, SHUFFLE_TURNS);
 	printCube(cube);
 	return cube;
 }
@@ -24,9 +34,8 @@ static bool pruneMove(void* state, int moveId) {
 }
 
 static void makeMove(void* state, int moveId) {
-	CubeFaceId faceId = moveId % 6;
-	TurnType type = (moveId - faceId) / 6 + 1;
-	turnCubeFace(state, faceId, type);
+	struct Move move = getMove(moveId);
+	turnCubeFace(state, move.faceId, move.type);
 }
 
 static void undoMove(void* state, int moveId) {
@@ -41,16 +50,22 @@ static bool isSolved(void* state) {
 	return cubeIsSolved(state);
 }
 
+static void printMove(int moveId) {
+	struct Move move = getMove(moveId);
+	printTurn(move.faceId, move.type, true);
+}
+
 static void __attribute__((constructor)) registerPuzzle() {
 	struct PuzzleModule puzzleModule = makePuzzleModule(
 		"Standard 3x3 Rubik's Cube",
-		numPossibleMoves,
+		NUM_POSSIBLE_MOVES,
 		&getStartState,
 		&pruneState,
 		&pruneMove,
 		&makeMove,
 		&undoMove,
-		&isSolved
+		&isSolved,
+		&printMove
 	);
 	registerPuzzleModule(puzzleModule);
 }

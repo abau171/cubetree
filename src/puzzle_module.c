@@ -20,7 +20,8 @@ struct PuzzleModule makePuzzleModule(
 		MovePruner pruneMove,
 		MoveMaker makeMove,
 		MoveUndoer undoMove,
-		SolveChecker isSolved) {
+		SolveChecker isSolved,
+		MovePrinter printMove) {
 
 	char* moduleNameCopy = malloc(strlen(moduleName) + sizeof(char));
 	strcpy(moduleNameCopy, moduleName);
@@ -33,6 +34,7 @@ struct PuzzleModule makePuzzleModule(
 		pruneMove,
 		makeMove,
 		undoMove,
-		isSolved
+		isSolved,
+		printMove
 	};
 }
