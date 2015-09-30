@@ -38,7 +38,7 @@ static void moveCorner(Cube cube, int source, int target, CubeFaceId faceId, boo
 /*
  * Revolves the 4 corners on a face in a given direction, but does not change their rotations.
  */
-void quarterRevolveCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
+static void quarterRevolveCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
 	struct Corner tmp = getCornerInTurnSequence(cube, 3, faceId, clockwise);
 	moveCorner(cube, 2, 3, faceId, clockwise);
 	moveCorner(cube, 1, 2, faceId, clockwise);
@@ -60,9 +60,18 @@ static void rotateCornerAlongFace(Cube cube, int source, int target, CubeFaceId 
 /*
  * Rotates the 4 corners of a face to correspond with a face turn.
  */
-void quarterRotateCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
+static void quarterRotateCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
 	for (int i = 0; i < NUM_CUBE_CORNERS_PER_FACE; i++) {
 		int j = (i + 1) % NUM_CUBE_CORNERS_PER_FACE;
 		rotateCornerAlongFace(cube, i, j, faceId, clockwise);
 	}
 }
+
+/*
+ * Turns the corners of a face during a full face turn.
+ */
+void quarterTurnCorners(Cube cube, CubeFaceId faceId, bool clockwise) {
+	quarterRotateCorners(cube, faceId, clockwise);
+	quarterRevolveCorners(cube, faceId, clockwise);
+}
+

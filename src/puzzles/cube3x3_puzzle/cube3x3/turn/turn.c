@@ -20,10 +20,8 @@
 void turnCubeFace(Cube cube, CubeFaceId faceId, TurnType type) {
 	if (type == CLOCKWISE_TURN || type == COUNTER_TURN) {
 		bool clockwise = (type == CLOCKWISE_TURN);
-		quarterRotateCorners(cube, faceId, clockwise);
-		quarterRevolveCorners(cube, faceId, clockwise);
-		quarterFlipEdges(cube, faceId, clockwise);
-		quarterRevolveEdges(cube, faceId, clockwise);
+		quarterTurnCorners(cube, faceId, clockwise);
+		quarterTurnEdges(cube, faceId, clockwise);
 	} else if (type == DOUBLE_TURN) {
 		turnCubeFace(cube, faceId, CLOCKWISE_TURN);
 		turnCubeFace(cube, faceId, CLOCKWISE_TURN);

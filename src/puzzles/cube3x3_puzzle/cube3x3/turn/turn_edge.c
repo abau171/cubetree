@@ -38,7 +38,7 @@ static void moveEdge(Cube cube, int source, int target, CubeFaceId faceId, bool 
 /*
  * Revolves he 4 edges on a face in a given direction, but does not change their flip state.
  */
-void quarterRevolveEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
+static void quarterRevolveEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
 	struct Edge tmp = getEdgeInTurnSequence(cube, 3, faceId, clockwise);
 	moveEdge(cube, 2, 3, faceId, clockwise);
 	moveEdge(cube, 1, 2, faceId, clockwise);
@@ -60,9 +60,18 @@ static void flipEdgeAlongFace(Cube cube, int source, int target, CubeFaceId face
 /*
  * Flips the 4 edges of a face to correspond with a face turn.
  */
-void quarterFlipEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
+static void quarterFlipEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
 	for (int i = 0; i < NUM_CUBE_EDGES_PER_FACE; i++) {
 		int j = (i + 1) % NUM_CUBE_EDGES_PER_FACE;
 		flipEdgeAlongFace(cube, i, j, faceId, clockwise);
 	}
 }
+
+/*
+ * Turns the edges of a face during a full face turn.
+ */
+void quarterTurnEdges(Cube cube, CubeFaceId faceId, bool clockwise) {
+	quarterFlipEdges(cube, faceId, clockwise);
+	quarterRevolveEdges(cube, faceId, clockwise);
+}
+
