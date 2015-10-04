@@ -30,6 +30,8 @@ typedef struct Cube* Cube;
 
 Cube newCube();
 
+Cube cloneCube(Cube originalCube);
+
 void freeCube(Cube cube);
 
 bool cubeIsSolved(Cube cube);

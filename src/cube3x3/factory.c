@@ -44,6 +44,15 @@ Cube newCube() {
 }
 
 /*
+ * Clones a cube.
+ */
+Cube cloneCube(Cube originalCube) {
+	Cube cube = malloc(sizeof(struct Cube));
+	*cube = *originalCube;
+	return cube;
+}
+
+/*
  * Frees a cube.*/
 void freeCube(Cube cube) {
 	free(cube);
