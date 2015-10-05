@@ -23,7 +23,7 @@ int main() {
 
 	while (1) {
 		Cube cube = newCube();
-		shuffleCube(cube, 11);
+		shuffleCube(cube, 14);
 		printCube(cube);
 		solveCube(cube);
 		printCube(cube);

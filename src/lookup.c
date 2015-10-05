@@ -2,6 +2,8 @@
 
 #include "lookup.h"
 #include "cornerLookup.h"
+#include "edgeLookup.h"
+#include "edgeLookup2.h"
 
 void initLookups() {
 	loadLookupsIfCached();
@@ -10,12 +12,18 @@ void initLookups() {
 
 bool loadLookupsIfCached() {
 	loadCornerLookup();
+	loadEdgeLookup();
+	loadEdge2Lookup();
 	return false;
 }
 
 void genLookups() {
-	genCornerLookup();
-	cacheLookups();
+	//genCornerLookup();
+	//cacheLookups();
+	//genEdgeLookup();
+	//cacheEdgeLookup();
+	genEdge2Lookup();
+	cacheEdge2Lookup();
 }
 
 void cacheLookups() {
