@@ -2,8 +2,8 @@
 #include <stdbool.h>
 #include <time.h>
 
-#include "../cube.h"
-#include "../model.h"
+#include <cube3x3/cube.h>
+#include <cube3x3/model.h>
 
 /*
  * Shuffles a cube a specific number of moves from its current state.

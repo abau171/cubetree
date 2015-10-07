@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
-#include "cube3x3/cube.h"
-#include "prune.h"
+#include <prune.h>
+
+#include <cube3x3/cube.h>
 
 struct CubeMoveNode {
 	CubeFaceId faceId;

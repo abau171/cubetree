@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "cube3x3/cube.h"
-#include "idaStar.h"
-#include "lookup.h"
-#include "cornerLookup.h"
+#include <idaStar.h>
+#include <lookup.h>
+#include <cornerLookup.h>
+
+#include <cube3x3/cube.h>
 
 int main() {
 	initLookups();

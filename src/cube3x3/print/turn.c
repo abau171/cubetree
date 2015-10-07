@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "../cube.h"
-#include "../model.h"
+#include <cube3x3/cube.h>
+#include <cube3x3/model.h>
 
 /*
  * Lookup table mapping faces of a cube to characters representing that face.

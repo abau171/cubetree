@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "cube3x3/cube.h"
-#include "cube3x3/access.h"
+#include <edgeLookup.h>
+
+#include <cube3x3/cube.h>
+#include <cube3x3/access.h>
 
 // (12! / 6!) * (2 ^ 6)
 #define NUM_STATES 42577920

@@ -14,7 +14,7 @@ $(TARGET): bin/ $(OBJECTS)
 
 obj/%.o: src/%.c
 	@mkdir -p "$(@D)"
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -I include/ -o $@ $< $(CFLAGS)
 
 bin/:
 	@mkdir -p bin

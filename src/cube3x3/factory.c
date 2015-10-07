@@ -1,8 +1,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "cube.h"
-#include "model.h"
+#include <cube3x3/cube.h>
+#include <cube3x3/model.h>
 
 /*
  * Solved state of a cube used for initializing new cubes.

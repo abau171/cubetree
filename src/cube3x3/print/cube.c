@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include "../cube.h"
-#include "../model.h"
-#include "../access.h"
+#include <cube3x3/cube.h>
+#include <cube3x3/model.h>
+#include <cube3x3/access.h>
 
 #define NUM_MIDDLE_FACES 4
 

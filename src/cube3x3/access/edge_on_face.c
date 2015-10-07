@@ -1,6 +1,6 @@
-#include "../cube.h"
-#include "../model.h"
-#include "../access.h"
+#include <cube3x3/cube.h>
+#include <cube3x3/model.h>
+#include <cube3x3/access.h>
 
 /*
  * Lookup table mapping face and edge-on-face pairs to edge slots.
