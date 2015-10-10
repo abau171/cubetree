@@ -6,10 +6,14 @@
 #include <idaStar.h>
 
 #include <cube3x3/cube.h>
+#include <cornerLookup.h>
 
 #define NUM_SHUFFLE_MOVES 5
 
 int main() {
+
+	initCornerLookup();
+
 	Cube cube = newCube();
 	struct CubeMoveData* shuffleMoves = shuffleCube(cube, NUM_SHUFFLE_MOVES);
 	for (int i = 0; i < NUM_SHUFFLE_MOVES; i++) {

@@ -4,13 +4,12 @@
 
 #include <cube3x3/cube.h>
 #include <cube3x3/cubeMoveStack.h>
+#include <cornerLookup.h>
 
 CubeMoveStack moveStack;
 
 static bool pruneState(Cube cube, int depth) {
-	(void) cube;
-	(void) depth;
-	return false;
+	return lookupCornerDistance(cube) > depth;
 }
 
 static bool searchDepth(Cube cube, int depth) {
