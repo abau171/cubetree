@@ -32,12 +32,12 @@ static char printInversionChar() {
 /*
  * Prints the string representation of a cube turn.
  */
-void printTurn(CubeFaceId faceId, TurnType type, bool includeNewline) {
-	printFaceChar(faceId);
-	if (type == COUNTER_TURN) {
+void printTurn(struct CubeMoveData move, bool includeNewline) {
+	printFaceChar(move.faceId);
+	if (move.turnType == COUNTER_TURN) {
 		printInversionChar();
-	} else if (type == DOUBLE_TURN) {
-		printFaceChar(faceId);
+	} else if (move.turnType == DOUBLE_TURN) {
+		printFaceChar(move.faceId);
 	}
 	if (includeNewline) {
 		putchar('\n');

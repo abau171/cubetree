@@ -23,6 +23,11 @@ enum CubeFaceId { U_FACE, L_FACE, F_FACE, R_FACE, B_FACE, D_FACE, NO_FACE = -1 }
 typedef int8_t TurnType;
 enum TurnType { NO_TURN, CLOCKWISE_TURN, DOUBLE_TURN, COUNTER_TURN };
 
+struct CubeMoveData {
+	CubeFaceId faceId;
+	TurnType turnType;
+};
+
 /*
  * Cube is defined as a pointer to a Cube structure.
  */
@@ -36,13 +41,13 @@ void freeCube(Cube cube);
 
 bool cubeIsSolved(Cube cube);
 
-void shuffleCube(Cube cube, int numTurns);
+struct CubeMoveData* shuffleCube(Cube cube, int numTurns);
 
 void turnCubeFace(Cube cube, CubeFaceId face, TurnType type);
 
 void printCube(Cube cube);
 
-void printTurn(CubeFaceId faceId, TurnType type, bool includeNewline);
+void printTurn(struct CubeMoveData, bool includeNewline);
 
 CubeFaceId getStickerFace(Cube cube, CubeFaceId curFaceId, int x, int y);
 

@@ -21,10 +21,9 @@ CubeMoveStack pushCubeMove(CubeMoveStack stack, CubeFaceId faceId, TurnType turn
 	return newNode;
 }
 
-CubeMoveStack popCubeMove(CubeMoveStack stack, CubeFaceId* faceId, TurnType* turnType) {
+CubeMoveStack popCubeMove(CubeMoveStack stack, struct CubeMoveData* move) {
 	struct CubeMoveStackNode* oldNode = stack;
-	*faceId = oldNode->data.faceId;
-	*turnType = oldNode->data.turnType;
+	*move = oldNode->data;
 	stack = oldNode->next;
 	free(oldNode);
 	return stack;

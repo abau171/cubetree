@@ -44,9 +44,8 @@ void solveCube(Cube cube) {
 		depth++;
 	} while (!solved);
 	while (hasCubeMove(moveStack)) {
-		CubeFaceId faceId;
-		TurnType turnType;
-		moveStack = popCubeMove(moveStack, &faceId, &turnType);
-		printTurn(faceId, turnType, true);
+		struct CubeMoveData move;
+		moveStack = popCubeMove(moveStack, &move);
+		printTurn(move, true);
 	}
 }
