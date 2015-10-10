@@ -2,24 +2,15 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include <prune.h>
-
 #include <cube3x3/cube.h>
+#include <cube3x3/cubeMoveStack.h>
 
-struct CubeMoveNode {
-	CubeFaceId faceId;
-	TurnType turnType;
-	struct CubeMoveNode* next;
-};
+CubeMoveStack moveStack;
 
-struct CubeMoveNode* moveStack;
-
-static void pushMove(CubeFaceId faceId, TurnType turnType) {
-	struct CubeMoveNode* newNode = malloc(sizeof(struct CubeMoveNode));
-	newNode->faceId = faceId;
-	newNode->turnType = turnType;
-	newNode->next = moveStack;
-	moveStack = newNode;
+static bool pruneState(Cube cube, int depth) {
+	(void) cube;
+	(void) depth;
+	return false;
 }
 
 static bool searchDepth(Cube cube, int depth) {
@@ -35,8 +26,7 @@ static bool searchDepth(Cube cube, int depth) {
 			turnCubeFace(clone, faceId, turnType);
 			bool solved = searchDepth(clone, depth - 1);
 			if (solved) {
-				puts("push");
-				pushMove(faceId, turnType);
+				moveStack = pushCubeMove(moveStack, faceId, turnType);
 				return true;
 			}
 		}
@@ -45,7 +35,7 @@ static bool searchDepth(Cube cube, int depth) {
 }
 
 void solveCube(Cube cube) {
-	moveStack = NULL;
+	moveStack = newCubeMoveStack();
 	bool solved = false;
 	int depth = 0;
 	do {
@@ -53,9 +43,10 @@ void solveCube(Cube cube) {
 		solved = searchDepth(cube, depth);
 		depth++;
 	} while (!solved);
-	struct CubeMoveNode* curNode = moveStack;
-	while (curNode != NULL) {
-		printTurn(curNode->faceId, curNode->turnType, true);
-		curNode = curNode->next;
+	while (hasCubeMove(moveStack)) {
+		CubeFaceId faceId;
+		TurnType turnType;
+		moveStack = popCubeMove(moveStack, &faceId, &turnType);
+		printTurn(faceId, turnType, true);
 	}
 }
