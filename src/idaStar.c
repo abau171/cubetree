@@ -34,6 +34,7 @@ static bool searchDepth(Cube cube, int depth) {
 				moveStack = pushCubeMove(moveStack, faceId, turnType);
 				return true;
 			}
+			freeCube(clone);
 		}
 	}
 	return false;
