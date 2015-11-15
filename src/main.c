@@ -7,12 +7,16 @@
 
 #include <cube3x3/cube.h>
 #include <cornerLookup.h>
+#include <edgeLookup.h>
+#include <edgeLookup2.h>
 
-#define NUM_SHUFFLE_MOVES 5
+#define NUM_SHUFFLE_MOVES 12
 
 int main() {
 
 	initCornerLookup();
+	initEdgeLookup();
+	initEdgeLookup2();
 
 	Cube cube = newCube();
 	struct CubeMoveData* shuffleMoves = shuffleCube(cube, NUM_SHUFFLE_MOVES);
