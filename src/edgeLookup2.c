@@ -67,10 +67,12 @@ static int encodeEdges2(Cube cube) {
 	}
 
 	// calculate for edge flips
-	for (int i = 6; i < 12; i++) {
+	for (int i = 0; i < 12; i++) {
 		struct Edge curEdge = getEdge(cube, i);
-		key *= 2;
-		key += curEdge.flip;
+		if (curEdge.id >= 6) {
+			key *= 2;
+			key += curEdge.flip;
+		}
 	}
 	return key;
 }
