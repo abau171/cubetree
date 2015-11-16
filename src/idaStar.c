@@ -18,7 +18,7 @@ static bool pruneState(Cube cube, int depth) {
 	return doPrune;
 }
 
-static bool searchDepth(Cube cube, int depth) {
+static bool searchDepth(Cube cube, int depth, CubeFaceId lastFaceId) {
 	if (depth == 0) {
 		return cubeIsSolved(cube);
 	}
@@ -27,14 +27,16 @@ static bool searchDepth(Cube cube, int depth) {
 	}
 	for (TurnType turnType = 1; turnType < 4; turnType++) {
 		for (CubeFaceId faceId = 0; faceId < 6; faceId++) {
-			Cube clone = cloneCube(cube);
-			turnCubeFace(clone, faceId, turnType);
-			bool solved = searchDepth(clone, depth - 1);
-			if (solved) {
-				moveStack = pushCubeMove(moveStack, faceId, turnType);
-				return true;
+			if (lastFaceId != faceId) {
+				Cube clone = cloneCube(cube);
+				turnCubeFace(clone, faceId, turnType);
+				bool solved = searchDepth(clone, depth - 1, faceId);
+				if (solved) {
+					moveStack = pushCubeMove(moveStack, faceId, turnType);
+					return true;
+				}
+				freeCube(clone);
 			}
-			freeCube(clone);
 		}
 	}
 	return false;
@@ -46,7 +48,7 @@ void solveCube(Cube cube) {
 	int depth = 0;
 	do {
 		printf("SEARCHING %d\n", depth);
-		solved = searchDepth(cube, depth);
+		solved = searchDepth(cube, depth, NO_FACE);
 		depth++;
 	} while (!solved);
 	while (hasCubeMove(moveStack)) {
