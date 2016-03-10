@@ -1,9 +1,9 @@
-CFLAGS=-std=gnu99 -Wall -Wextra
+CFLAGS=-std=gnu99 -Wall -Wextra -O3
 
 SOURCES=$(shell find src/ -type f -name "*.c")
 OBJECTS=$(patsubst src/%.c,obj/%.o,$(SOURCES))
 
-TARGET=bin/CubeTree
+TARGET=bin/a.out
 
 .SECONDARY:
 
