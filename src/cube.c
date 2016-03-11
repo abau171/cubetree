@@ -32,6 +32,13 @@ void turnCube(cube_t* destination,
                    turn_type);
 }
 
+void turnCubeSelf(cube_t* cube,
+                  uint8_t face,
+                  int turn_type) {
+    cube_t original_cube = *cube;
+    turnCube(cube, &original_cube, face, turn_type);
+}
+
 uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i) {
     if (i % 2 == 0) {
         return getFaceletCornerSystem(&cube->cornersystem, face, i / 2);
