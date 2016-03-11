@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <cube_utils.h>
 #include <cube.h>
 #include <ida_star.h>
 #include <corner_lookup.h>
@@ -24,7 +25,9 @@ static bool prune_state(const cube_t* cube, int depth) {
 	return false;
 }
 
-static bool searchDepth(const cube_t* last_cube, int depth) {
+static uint8_t opposite_faces[7] = {D_FACE, R_FACE, B_FACE, L_FACE, F_FACE, U_FACE, 6};
+
+static bool searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
 	if (depth == 0) {
 		return isSolvedCube(last_cube);
 	} else if (prune_state(last_cube, depth)) {
@@ -32,9 +35,14 @@ static bool searchDepth(const cube_t* last_cube, int depth) {
 	} else {
 		cube_t cur_cube;
 		for (uint8_t face = 0; face < 6; face++) {
+			if (face == last_face) {
+				continue;
+			} else if (face < 3 && face == opposite_faces[last_face]) {
+				continue;
+			}
 			for (int turn_type = 1; turn_type < 4; turn_type++) {
 				turnCube(&cur_cube, last_cube, face, turn_type);
-				bool result = searchDepth(&cur_cube, depth - 1);
+				bool result = searchDepth(&cur_cube, depth - 1, face);
 				if (result) {
 					return true;
 				}
@@ -48,7 +56,7 @@ bool idaStar(const cube_t* cube) {
 	int depth = 0;
 	while (true) {
 		printf("DEPTH %d\n", depth);
-		bool result = searchDepth(cube, depth);
+		bool result = searchDepth(cube, depth, 6);
 		if (result) {
 			return result;
 		}
