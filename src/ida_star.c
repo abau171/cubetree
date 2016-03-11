@@ -3,10 +3,13 @@
 #include <stdio.h>
 
 #include <cube.h>
+#include <corner_lookup.h>
 
 static bool searchDepth(const cube_t* last_cube, int depth) {
 	if (depth == 0) {
 		return isSolvedCube(last_cube);
+	} else if (lookupCornerDistance(encodeCornerSystem(&last_cube->cornersystem)) > depth) {
+		return false;
 	} else {
 		cube_t cur_cube;
 		for (uint8_t face = 0; face < 6; face++) {
