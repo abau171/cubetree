@@ -40,6 +40,10 @@ uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i) {
     }
 }
 
+bool isSolvedCube(const cube_t* cube) {
+    return isSolvedCornerSystem(&cube->cornersystem) && isSolvedEdgeSystem(&cube->edgesystem);
+}
+
 void printCube(const cube_t* cube) {
     for (int face = 0; face < 6; face++) {
         for (int i = 0; i < 8; i++) {

@@ -88,6 +88,15 @@ uint8_t getFaceletEdgeSystem(const edgesystem_t* es, uint8_t face, int i) {
     return edge_facelets[edge->eid][facelet_flip];
 }
 
+bool isSolvedEdgeSystem(const edgesystem_t* es) {
+    for (int i = 0; i < 12; i++) {
+        if (es->edges[i].eid != i || es->edges[i].flip != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void printEdgeSystem(const edgesystem_t* es) {
     for (int i = 0; i < 12; i++) {
         printf("%d, %d\n", es->edges[i].eid, es->edges[i].flip);

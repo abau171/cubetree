@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -81,6 +82,15 @@ uint8_t getFaceletCornerSystem(const cornersystem_t* cs, uint8_t face, int i) {
     const corner_t* corner = &cs->corners[face_corner->cid];
     uint8_t facelet_rotation = positive_modulo(face_corner->rotation - corner->rotation, 3);
     return corner_facelets[corner->cid][facelet_rotation];
+}
+
+bool isSolvedCornerSystem(const cornersystem_t* cs) {
+    for (int i = 0; i < 8; i++) {
+        if (cs->corners[i].cid != i || cs->corners[i].rotation != 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void printCornerSystem(const cornersystem_t* cs) {

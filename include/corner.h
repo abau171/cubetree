@@ -1,6 +1,7 @@
 #ifndef CORNER_H
 #define CORNER_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 typedef struct {
@@ -20,6 +21,8 @@ void turnCornerSystem(cornersystem_t* destination,
                       int turn_type);
 
 uint8_t getFaceletCornerSystem(const cornersystem_t* cs, uint8_t face, int i);
+
+bool isSolvedCornerSystem(const cornersystem_t* cs);
 
 void printCornerSystem(const cornersystem_t* cs);
 

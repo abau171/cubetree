@@ -1,6 +1,7 @@
 #ifndef EDGE_H
 #define EDGE_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 typedef struct {
@@ -20,6 +21,8 @@ void turnEdgeSystem(edgesystem_t* destination,
                     int turn_type);
 
 uint8_t getFaceletEdgeSystem(const edgesystem_t* es, uint8_t face, int i);
+
+bool isSolvedEdgeSystem(const edgesystem_t* es);
 
 void printEdgeSystem(const edgesystem_t* es);
 

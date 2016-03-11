@@ -1,6 +1,7 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include <corner.h>
@@ -19,6 +20,8 @@ void turnCube(cube_t* destination,
               int turn_type);
 
 uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i);
+
+bool isSolvedCube(const cube_t* cube);
 
 void printCube(const cube_t* cube);
 
