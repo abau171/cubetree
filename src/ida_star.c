@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -27,37 +28,49 @@ static bool prune_state(const cube_t* cube, int depth) {
 
 static uint8_t opposite_faces[7] = {D_FACE, R_FACE, B_FACE, L_FACE, F_FACE, U_FACE, 6};
 
-static bool searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
-	if (depth == 0) {
-		return isSolvedCube(last_cube);
-	} else if (prune_state(last_cube, depth)) {
-		return false;
-	} else {
-		cube_t cur_cube;
-		for (uint8_t face = 0; face < 6; face++) {
-			if (face == last_face) {
+static movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
+	cube_t cur_cube;
+	for (uint8_t face = 0; face < 6; face++) {
+		if (face == last_face) {
+			continue;
+		} else if (face < 3 && face == opposite_faces[last_face]) {
+			continue;
+		}
+		for (int turn_type = 1; turn_type < 4; turn_type++) {
+			turnCube(&cur_cube, last_cube, face, turn_type);
+			if (depth - 1 == 0) {
+				if (isSolvedCube(&cur_cube)) {
+					movenode_t* solution = malloc(sizeof(movenode_t));
+					solution->face = face;
+					solution->turn_type = turn_type;
+					solution->next_node = NULL;
+					return solution;
+				} else {
+					continue;
+				}
+			} else if (prune_state(&cur_cube, depth - 1)) {
 				continue;
-			} else if (face < 3 && face == opposite_faces[last_face]) {
-				continue;
-			}
-			for (int turn_type = 1; turn_type < 4; turn_type++) {
-				turnCube(&cur_cube, last_cube, face, turn_type);
-				bool result = searchDepth(&cur_cube, depth - 1, face);
-				if (result) {
-					return true;
+			} else {
+				movenode_t* partial_solution = searchDepth(&cur_cube, depth - 1, face);
+				if (partial_solution != NULL) {
+					movenode_t* solution = malloc(sizeof(movenode_t));
+					solution->face = face;
+					solution->turn_type = turn_type;
+					solution->next_node = partial_solution;
+					return solution;
 				}
 			}
 		}
-		return false;
 	}
+	return NULL;
 }
 
-bool idaStar(const cube_t* cube) {
+movenode_t* idaStar(const cube_t* cube) {
 	int depth = 0;
 	while (true) {
 		printf("DEPTH %d\n", depth);
-		bool result = searchDepth(cube, depth, 6);
-		if (result) {
+		movenode_t* result = searchDepth(cube, depth, 6);
+		if (result != NULL) {
 			return result;
 		}
 		depth++;

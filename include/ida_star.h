@@ -3,6 +3,12 @@
 
 #include <cube.h>
 
-bool idaStar(const cube_t* cube);
+typedef struct movenode_t {
+	uint8_t face;
+	int turn_type;
+	struct movenode_t* next_node;
+} movenode_t;
+
+movenode_t* idaStar(const cube_t* cube);
 
 #endif
