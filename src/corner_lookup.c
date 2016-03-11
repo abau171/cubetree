@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include <corner.h>
+#include <corner_lookup.h>
 
 static int fact[] = {1, 1, 2, 6, 24, 120, 720, 5040};
 

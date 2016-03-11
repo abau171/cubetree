@@ -3,12 +3,26 @@
 #include <stdio.h>
 
 #include <cube.h>
+#include <ida_star.h>
 #include <corner_lookup.h>
+#include <upper_edge_lookup.h>
+
+static bool prune_state(const cube_t* cube, int depth) {
+	int cornersystem_encoding = encodeCornerSystem(&cube->cornersystem);
+	if (lookupCornerDistance(cornersystem_encoding) > depth) {
+		return true;
+	}
+	int upper_edgesystem_encoding = encodeUpperEdgeSystem(&cube->edgesystem);
+	if (lookupUpperEdgeDistance(upper_edgesystem_encoding) > depth) {
+		return true;
+	}
+	return false;
+}
 
 static bool searchDepth(const cube_t* last_cube, int depth) {
 	if (depth == 0) {
 		return isSolvedCube(last_cube);
-	} else if (lookupCornerDistance(encodeCornerSystem(&last_cube->cornersystem)) > depth) {
+	} else if (prune_state(last_cube, depth)) {
 		return false;
 	} else {
 		cube_t cur_cube;
