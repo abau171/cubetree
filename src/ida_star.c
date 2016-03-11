@@ -6,6 +6,7 @@
 #include <ida_star.h>
 #include <corner_lookup.h>
 #include <upper_edge_lookup.h>
+#include <lower_edge_lookup.h>
 
 static bool prune_state(const cube_t* cube, int depth) {
 	int cornersystem_encoding = encodeCornerSystem(&cube->cornersystem);
@@ -14,6 +15,10 @@ static bool prune_state(const cube_t* cube, int depth) {
 	}
 	int upper_edgesystem_encoding = encodeUpperEdgeSystem(&cube->edgesystem);
 	if (lookupUpperEdgeDistance(upper_edgesystem_encoding) > depth) {
+		return true;
+	}
+	int lower_edgesystem_encoding = encodeLowerEdgeSystem(&cube->edgesystem);
+	if (lookupLowerEdgeDistance(lower_edgesystem_encoding) > depth) {
 		return true;
 	}
 	return false;
