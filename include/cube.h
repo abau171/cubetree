@@ -27,6 +27,8 @@ uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i);
 
 bool isSolvedCube(const cube_t* cube);
 
+void shuffleCube(cube_t* cube, int iterations);
+
 void printCube(const cube_t* cube);
 
 #endif

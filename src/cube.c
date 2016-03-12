@@ -1,5 +1,8 @@
+#include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
+#include <cube_utils.h>
 #include <cube.h>
 #include <corner.h>
 #include <edge.h>
@@ -49,6 +52,21 @@ uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i) {
 
 bool isSolvedCube(const cube_t* cube) {
     return isSolvedCornerSystem(&cube->cornersystem) && isSolvedEdgeSystem(&cube->edgesystem);
+}
+
+void shuffleCube(cube_t* cube, int iterations) {
+    srand(time(NULL));
+    uint8_t last_face = 6;
+    for (int i = 0; i < iterations; i++) {
+        uint8_t face;
+        do {
+            face = rand() % 6;
+        } while (face == last_face);
+        int turn_type = rand() % 3 + 1;
+        printCubeMove(face, turn_type);
+        turnCubeSelf(cube, face, turn_type);
+        last_face = face;
+    }
 }
 
 void printCube(const cube_t* cube) {

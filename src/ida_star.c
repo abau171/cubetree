@@ -37,6 +37,12 @@ static movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_
 			continue;
 		}
 		for (int turn_type = 1; turn_type < 4; turn_type++) {
+			if (depth >= 15) {
+				for (int i = 0; i < depth - 15; i++) {
+					putchar('\t');
+				}
+				printf("Face: %d Turn: %d\n", face, turn_type);
+			}
 			turnCube(&cur_cube, last_cube, face, turn_type);
 			if (depth - 1 == 0) {
 				if (isSolvedCube(&cur_cube)) {

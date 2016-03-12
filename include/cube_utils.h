@@ -1,6 +1,8 @@
 #ifndef CUBE_UTIL_H
 #define CUBE_UTIL_H
 
+#include <stdint.h>
+
 #define positive_modulo(x, mod) (((x % mod) + mod) % mod)
 
 #define U_FACE 0
@@ -13,5 +15,7 @@
 #define CLOCKWISE_TURN 1
 #define DOUBLE_TURN 2
 #define COUNTER_TURN 3
+
+void printCubeMove(uint8_t face, int turn_type);
 
 #endif
