@@ -28,7 +28,7 @@ static bool prune_state(const cube_t* cube, int depth) {
 
 static uint8_t opposite_faces[7] = {D_FACE, R_FACE, B_FACE, L_FACE, F_FACE, U_FACE, 6};
 
-static movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
+movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
 	cube_t cur_cube;
 	for (uint8_t face = 0; face < 6; face++) {
 		if (face == last_face) {

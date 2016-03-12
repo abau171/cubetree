@@ -13,8 +13,8 @@ int main() {
     loadUpperEdgeLookupCache();
     loadLowerEdgeLookupCache();
     cube_t cube = solved_cube;
-    shuffleCube(&cube, 17);
-    movenode_t* solution = idaStar(&cube);
+    shuffleCube(&cube, 16);
+    movenode_t* solution = multithreadedIdaStar(&cube);
     movenode_t* cur_node = solution;
     while (cur_node != NULL) {
         printCubeMove(cur_node->face, cur_node->turn_type);

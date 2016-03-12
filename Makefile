@@ -1,4 +1,4 @@
-CFLAGS=-std=gnu99 -Wall -Wextra -O3
+CFLAGS=-std=gnu99 -Wall -Wextra -O3 -lpthread
 
 SOURCES=$(shell find src/ -type f -name "*.c")
 OBJECTS=$(patsubst src/%.c,obj/%.o,$(SOURCES))
