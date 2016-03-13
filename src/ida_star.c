@@ -46,8 +46,8 @@ movenode_t* prependMoveNode(movenode_t* move_list, uint8_t face, int turn_type) 
 }
 
 // depth >= 1
-movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
-	// if solution found (in other thread), return NULL
+movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face, bool* cancel_flag) {
+	if (*cancel_flag) return NULL;
 	cube_t cur_cube;
 	for (uint8_t face = 0; face < 6; face++) {
 		if (prune_move(face, last_face)) continue;
@@ -60,7 +60,7 @@ movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
 				}
 			// otherwise, if the state doesn't need to be pruned, search deeper
 			} else if (!prune_state(&cur_cube, depth - 1)) {
-				movenode_t* partial_solution = searchDepth(&cur_cube, depth - 1, face);
+				movenode_t* partial_solution = searchDepth(&cur_cube, depth - 1, face, cancel_flag);
 				if (partial_solution != NULL) {
 					return prependMoveNode(partial_solution, face, turn_type);
 				}
@@ -72,13 +72,14 @@ movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
 
 // cube must not already be solved
 movenode_t* idaStar(const cube_t* cube) {
-	int depth = 1;
+	int depth = 0;
+	bool cancel_flag = false;
 	while (true) {
+		depth++;
 		printf("DEPTH %d\n", depth);
-		movenode_t* result = searchDepth(cube, depth, 6);
+		movenode_t* result = searchDepth(cube, depth, 6, &cancel_flag);
 		if (result != NULL) {
 			return result;
 		}
-		depth++;
 	}
 }
