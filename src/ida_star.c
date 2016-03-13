@@ -10,6 +10,17 @@
 #include <upper_edge_lookup.h>
 #include <lower_edge_lookup.h>
 
+static uint8_t opposite_faces[7] = {D_FACE, R_FACE, B_FACE, L_FACE, F_FACE, U_FACE, 6};
+
+static bool prune_move(uint8_t face, uint8_t last_face) {
+	if (face == last_face) {
+		return true;
+	} else if (face < 3 && face == opposite_faces[last_face]) {
+		return true;
+	}
+	return false;
+}
+
 static bool prune_state(const cube_t* cube, int depth) {
 	int cornersystem_encoding = encodeCornerSystem(&cube->cornersystem);
 	if (lookupCornerDistance(cornersystem_encoding) > depth) {
@@ -26,44 +37,32 @@ static bool prune_state(const cube_t* cube, int depth) {
 	return false;
 }
 
-static uint8_t opposite_faces[7] = {D_FACE, R_FACE, B_FACE, L_FACE, F_FACE, U_FACE, 6};
+movenode_t* prependMoveNode(movenode_t* move_list, uint8_t face, int turn_type) {
+	movenode_t* new_move_list = malloc(sizeof(movenode_t));
+	new_move_list->face = face;
+	new_move_list->turn_type = turn_type;
+	new_move_list->next_node = move_list;
+	return new_move_list;
+}
 
+// depth >= 1
 movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
+	// if solution found (in other thread), return NULL
 	cube_t cur_cube;
 	for (uint8_t face = 0; face < 6; face++) {
-		if (face == last_face) {
-			continue;
-		} else if (face < 3 && face == opposite_faces[last_face]) {
-			continue;
-		}
+		if (prune_move(face, last_face)) continue;
 		for (int turn_type = 1; turn_type < 4; turn_type++) {
-			if (depth >= 15) {
-				for (int i = 0; i < depth - 15; i++) {
-					putchar('\t');
-				}
-				printf("Face: %d Turn: %d\n", face, turn_type);
-			}
 			turnCube(&cur_cube, last_cube, face, turn_type);
+			// if depth will be 0, check if solution found
 			if (depth - 1 == 0) {
 				if (isSolvedCube(&cur_cube)) {
-					movenode_t* solution = malloc(sizeof(movenode_t));
-					solution->face = face;
-					solution->turn_type = turn_type;
-					solution->next_node = NULL;
-					return solution;
-				} else {
-					continue;
+					return prependMoveNode(NULL, face, turn_type);
 				}
-			} else if (prune_state(&cur_cube, depth - 1)) {
-				continue;
-			} else {
+			// otherwise, if the state doesn't need to be pruned, search deeper
+			} else if (!prune_state(&cur_cube, depth - 1)) {
 				movenode_t* partial_solution = searchDepth(&cur_cube, depth - 1, face);
 				if (partial_solution != NULL) {
-					movenode_t* solution = malloc(sizeof(movenode_t));
-					solution->face = face;
-					solution->turn_type = turn_type;
-					solution->next_node = partial_solution;
-					return solution;
+					return prependMoveNode(partial_solution, face, turn_type);
 				}
 			}
 		}
@@ -71,8 +70,9 @@ movenode_t* searchDepth(const cube_t* last_cube, int depth, uint8_t last_face) {
 	return NULL;
 }
 
+// cube must not already be solved
 movenode_t* idaStar(const cube_t* cube) {
-	int depth = 0;
+	int depth = 1;
 	while (true) {
 		printf("DEPTH %d\n", depth);
 		movenode_t* result = searchDepth(cube, depth, 6);
