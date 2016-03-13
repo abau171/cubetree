@@ -44,9 +44,11 @@ int encodeUpperEdgeSystem(const edgesystem_t* es) {
         }
         key += numLess * fact[5 - i];
     }
-    for (int i = 0; i < 6; i++) {
-        key *= 2;
-        key += es->edges[i].flip;
+    for (int i = 0; i < 12; i++) {
+        if (es->edges[i].eid < 6) {
+            key *= 2;
+            key += es->edges[i].flip;
+        }
     }
     return key;
 }
