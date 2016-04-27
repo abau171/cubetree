@@ -4,8 +4,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include <corner.h>
-#include <edge.h>
+#include <cube.h>
 #include <lookup.h>
 
 // number of unique corner systems

@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#include <cube_utils.h>
 #include <cube.h>
 #include <ida_star.h>
 

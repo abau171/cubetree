@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <cube_utils.h>
 #include <cube.h>
 #include <ida_star.h>
 #include <multithreaded_ida_star.h>
