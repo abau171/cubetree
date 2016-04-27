@@ -6,9 +6,7 @@
 #include <cube_utils.h>
 #include <cube.h>
 #include <ida_star.h>
-#include <corner_lookup.h>
-#include <upper_edge_lookup.h>
-#include <lower_edge_lookup.h>
+#include <lookup.h>
 
 static uint8_t opposite_faces[7] = {D_FACE, R_FACE, B_FACE, L_FACE, F_FACE, U_FACE, 6};
 
