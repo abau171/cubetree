@@ -34,7 +34,7 @@ static bool prune_state(const cube_t* cube, int depth) {
 	return false;
 }
 
-movenode_t* prependMoveNode(movenode_t* move_list, uint8_t face, int turn_type) {
+static movenode_t* prependMoveNode(movenode_t* move_list, uint8_t face, int turn_type) {
 	movenode_t* new_move_list = malloc(sizeof(movenode_t));
 	new_move_list->face = face;
 	new_move_list->turn_type = turn_type;
@@ -80,3 +80,4 @@ movenode_t* idaStar(const cube_t* cube) {
 		}
 	}
 }
+
