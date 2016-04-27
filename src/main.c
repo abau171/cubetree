@@ -8,18 +8,16 @@
 #include <lookup.h>
 
 int main() {
-    genCornerLookup();
-    saveCornerLookup();
-    genUpperEdgeLookup();
-    saveUpperEdgeLookup();
-    genLowerEdgeLookup();
-    saveLowerEdgeLookup();
-    /*cube_t cube = solved_cube;
-    shuffleCube(&cube, 100);
+    loadCornerLookup();
+    loadUpperEdgeLookup();
+    loadLowerEdgeLookup();
+    cube_t cube = solved_cube;
+    shuffleCube(&cube, 14);
     movenode_t* solution = multithreadedIdaStar(&cube);
     movenode_t* cur_node = solution;
     while (cur_node != NULL) {
         printCubeMove(cur_node->face, cur_node->turn_type);
         cur_node = cur_node->next_node;
-    }*/
+    }
 }
+

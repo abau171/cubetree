@@ -1,5 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 #include <corner.h>
 #include <edge.h>
@@ -20,9 +23,9 @@ static int ncr(int n, int r) {
 }
 
 /* in-memory lookup tables */
-static uint8_t corner_lookup[CORNER_LOOKUP_SIZE];
-static uint8_t upper_edge_lookup[EDGE_LOOKUP_SIZE];
-static uint8_t lower_edge_lookup[EDGE_LOOKUP_SIZE];
+static uint8_t* corner_lookup;
+static uint8_t* upper_edge_lookup;
+static uint8_t* lower_edge_lookup;
 
 /* generator queue node definitions*/
 
@@ -294,20 +297,23 @@ void saveLowerEdgeLookup() {
 }
 
 void loadCornerLookup() {
-    FILE* file = fopen("cache/corner.cache", "rb");
-    fread(corner_lookup, sizeof(char), CORNER_LOOKUP_SIZE, file);
-    fclose(file);
+    int fd = open("cache/corner.cache", O_RDONLY);
+    corner_lookup = mmap(NULL, CORNER_LOOKUP_SIZE * sizeof(uint8_t), PROT_READ, MAP_SHARED | MAP_POPULATE, fd, 0);
+    close(fd);
+    mlock(corner_lookup, CORNER_LOOKUP_SIZE * sizeof(uint8_t));
 }
 
 void loadUpperEdgeLookup() {
-    FILE* file = fopen("cache/upper_edge.cache", "rb");
-    fread(upper_edge_lookup, sizeof(char), EDGE_LOOKUP_SIZE, file);
-    fclose(file);
+    int fd = open("cache/upper_edge.cache", O_RDONLY);
+    upper_edge_lookup = mmap(NULL, EDGE_LOOKUP_SIZE * sizeof(uint8_t), PROT_READ, MAP_SHARED | MAP_POPULATE, fd, 0);
+    close(fd);
+    mlock(upper_edge_lookup, CORNER_LOOKUP_SIZE * sizeof(uint8_t));
 }
 
 void loadLowerEdgeLookup() {
-    FILE* file = fopen("cache/lower_edge.cache", "rb");
-    fread(lower_edge_lookup, sizeof(char), EDGE_LOOKUP_SIZE, file);
-    fclose(file);
+    int fd = open("cache/lower_edge.cache", O_RDONLY);
+    lower_edge_lookup = mmap(NULL, EDGE_LOOKUP_SIZE * sizeof(uint8_t), PROT_READ, MAP_SHARED | MAP_POPULATE, fd, 0);
+    close(fd);
+    mlock(lower_edge_lookup, CORNER_LOOKUP_SIZE * sizeof(uint8_t));
 }
 
