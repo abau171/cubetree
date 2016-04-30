@@ -241,7 +241,6 @@ void shuffleCube(cube_t* cube, int iterations) {
             face = rand() % 6;
         } while (face == last_face);
         int turn_type = rand() % 3 + 1;
-        printCubeMove(face, turn_type);
         turnCubeSelf(cube, face, turn_type);
         last_face = face;
     }
