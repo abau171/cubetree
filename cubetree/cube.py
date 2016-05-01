@@ -1,4 +1,17 @@
+import enum
+
 import _cubetree
+
+class Face(enum.Enum):
+    UP, LEFT, FRONT, RIGHT, BACK, DOWN = range(6)
+
+class TurnType(enum.Enum):
+    NO_TURN, CLOCKWISE, DOUBLE, COUNTER = range(4)
+
+class Move:
+    def __init__(self, face, turn_type):
+        self.face = face
+        self.turn_type = turn_type
 
 class Cube:
     def __init__(self):
@@ -28,5 +41,15 @@ class Cube:
     def load_lookups(self):
         self.raw_cube.load_lookups()
     def search_depth(self, depth):
-        self.raw_cube.search_depth(depth)
+        raw_solution = self.raw_cube.search_depth(depth)
+        return [Move(Face(face_index), TurnType(turn_type_index)) for face_index, turn_type_index in raw_solution]
+    def solve(self):
+        if self.is_solved():
+            return []
+        cur_depth = 0
+        while True:
+            cur_depth += 1
+            possible_solution = self.search_depth(cur_depth)
+            if len(possible_solution) > 0:
+                return possible_solution
 

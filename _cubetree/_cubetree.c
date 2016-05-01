@@ -64,8 +64,23 @@ Cube_search_depth(_cubetree_CubeObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "i", &depth))
         return NULL;
     bool cancel_flag = false;
-    searchDepth(&self->cube_state, depth, 6, &cancel_flag);
-    Py_RETURN_NONE;
+    movenode_t* solution_node = searchDepth(&self->cube_state, depth, 6, &cancel_flag);
+    PyObject* solution_list = PyList_New(0);
+    while (solution_node != NULL) {
+        PyObject* move = PyTuple_New(2);
+
+        PyObject* tmp = Py_BuildValue("i", solution_node->face);
+        PyTuple_SetItem(move, 0, tmp);
+
+        tmp = Py_BuildValue("i", solution_node->turn_type);
+        PyTuple_SetItem(move, 1, tmp);
+
+        PyList_Append(solution_list, move);
+        Py_DECREF(move);
+
+        solution_node = solution_node->next_node;
+    }
+    return solution_list;
 }
 
 static PyMethodDef Cube_methods[] = {
