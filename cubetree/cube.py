@@ -25,4 +25,8 @@ class Cube:
         return self.raw_cube.is_solved()
     def shuffle(self, i):
         self.raw_cube.shuffle(i)
+    def load_lookups(self):
+        self.raw_cube.load_lookups()
+    def search_depth(self, depth):
+        self.raw_cube.search_depth(depth)
 

@@ -5,7 +5,8 @@ module = Extension("_cubetree",
                             "_cubetree/cube.c",
                             "_cubetree/lookup.c",
                             "_cubetree/ida_star.c"],
-                   include_dirs=["_cubetree/"])
+                   include_dirs=["_cubetree/"],
+                   extra_compile_args=["-O3"])
 
-setup(name="cubetree", py_modules=["cubetree"], ext_modules=[module])
+setup(name="cubetree", packages=["cubetree"], ext_modules=[module])
 

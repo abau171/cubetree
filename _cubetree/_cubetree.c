@@ -1,6 +1,10 @@
 #include <Python.h>
 
+#include <stdbool.h>
+
 #include <cube.h>
+#include <lookup.h>
+#include <ida_star.h>
 
 typedef struct {
     PyObject_HEAD
@@ -46,6 +50,24 @@ Cube_shuffle(_cubetree_CubeObject* self, PyObject* args) {
     Py_RETURN_NONE;
 }
 
+static PyObject*
+Cube_load_lookups(_cubetree_CubeObject* self) {
+    loadCornerLookup();
+    loadUpperEdgeLookup();
+    loadLowerEdgeLookup();
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+Cube_search_depth(_cubetree_CubeObject* self, PyObject* args) {
+    int depth;
+    if (!PyArg_ParseTuple(args, "i", &depth))
+        return NULL;
+    bool cancel_flag = false;
+    searchDepth(&self->cube_state, depth, 6, &cancel_flag);
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef Cube_methods[] = {
     {"is_solved", (PyCFunction) Cube_is_solved, METH_NOARGS,
      "Returns True if the cube is solved, False otherwise."},
@@ -53,6 +75,10 @@ static PyMethodDef Cube_methods[] = {
      "Shuffles the cube by turning a random face a number of times."},
     {"get_facelet", (PyCFunction) Cube_get_facelet, METH_VARARGS,
     "Gets the facelet color from a facelet id on the cube."},
+    {"search_depth", (PyCFunction) Cube_search_depth, METH_VARARGS,
+    "Searches the cube for a solution at a given depth."},
+    {"load_lookups", (PyCFunction) Cube_load_lookups, METH_NOARGS,
+    "Loads cached lookup tables from the filesystem."},
     {NULL} /* Sentinel */
 };
 
