@@ -43,7 +43,7 @@ typedef struct {
 } cube_t;
 
 
-/* pre-initialized cube components */
+/* pre-initialized solved cube references */
 const cube_t solved_cube;
 const cornersystem_t solved_cornersystem;
 const edgesystem_t solved_edgesystem;
@@ -75,13 +75,6 @@ uint8_t getFaceletCornerSystem(const cornersystem_t* cs, uint8_t face, int i);
 bool isSolvedCornerSystem(const cornersystem_t* cs);
 uint8_t getFaceletEdgeSystem(const edgesystem_t* es, uint8_t face, int i);
 bool isSolvedEdgeSystem(const edgesystem_t* es);
-
-
-/* cube printing functions */
-void printCube(const cube_t* cube);
-void printCubeMove(uint8_t face, int turn_type);
-void printCornerSystem(const cornersystem_t* cs);
-void printEdgeSystem(const edgesystem_t* es);
 
 
 #endif

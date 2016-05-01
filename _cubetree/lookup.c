@@ -21,7 +21,7 @@ static int ncr(int n, int r) {
     return fact[n] / (fact[r] * fact[n - r]);
 }
 
-/* in-memory lookup tables */
+/* mmaped lookup tables */
 static uint8_t* corner_lookup;
 static uint8_t* upper_edge_lookup;
 static uint8_t* lower_edge_lookup;

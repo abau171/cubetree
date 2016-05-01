@@ -161,13 +161,21 @@ void turnCornerSystem(cornersystem_t* destination,
                       uint8_t face,
                       int turn_type) {
     *destination = *source;
+    // for each corner in the rotated face
     for (int i = 0; i < 4; i++) {
+        // index of new corner position
         int j = (i + turn_type) % 4;
+        // start corner orientation
         const corner_t* start_face_corner = &face_corners[face][i];
+        // end corner orientation
         const corner_t* end_face_corner = &face_corners[face][j];
+        // physical corner being moved between orientations
         const corner_t* cur_corner = &source->corners[start_face_corner->cid];
+        // rotate by the difference between start and end orientation rotations
         uint8_t new_rotation = positive_modulo(cur_corner->rotation + end_face_corner->rotation - start_face_corner->rotation, 3);
+        // set the corner id at the end orientation to the rotated corner's id
         destination->corners[end_face_corner->cid].cid = cur_corner->cid;
+        // update the rotation for the rotated corner
         destination->corners[end_face_corner->cid].rotation = new_rotation;
     }
 }
@@ -177,18 +185,27 @@ void turnEdgeSystem(edgesystem_t* destination,
                     uint8_t face,
                     int turn_type) {
     *destination = *source;
+    // for each edge in the rotated face
     for (int i = 0; i < 4; i++) {
+        // index of new edge position
         int j = (i + turn_type) % 4;
+        // start edge orientation
         const edge_t* start_face_edge = &face_edges[face][i];
+        // end edge orientation
         const edge_t* end_face_edge = &face_edges[face][j];
+        // physical edge being moved between orientations
         const edge_t* cur_edge = &source->edges[start_face_edge->eid];
+        // flip the edge if the start and end edges are flipped differently
         uint8_t new_flip = positive_modulo(cur_edge->flip + end_face_edge->flip - start_face_edge->flip, 2);
+        // set the edge id at the end orientation to the rotated edge's id
         destination->edges[end_face_edge->eid].eid = cur_edge->eid;
+        // update the flip for the rotated edge
         destination->edges[end_face_edge->eid].flip = new_flip;
     }
 }
 
 uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i) {
+    // even indices are for corners, odd indices are for edges
     if (i % 2 == 0) {
         return getFaceletCornerSystem(&cube->cornersystem, face, i / 2);
     } else {
@@ -197,16 +214,24 @@ uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i) {
 }
 
 uint8_t getFaceletCornerSystem(const cornersystem_t* cs, uint8_t face, int i) {
+    // find the corner orientation
     const corner_t* face_corner = &face_corners[face][i];
+    // find the physical corner at the orientation
     const corner_t* corner = &cs->corners[face_corner->cid];
+    // find the inverse rotation of the physical corner
     uint8_t facelet_rotation = positive_modulo(face_corner->rotation - corner->rotation, 3);
+    // return the facelet at the found rotation
     return corner_facelets[corner->cid][facelet_rotation];
 }
 
 uint8_t getFaceletEdgeSystem(const edgesystem_t* es, uint8_t face, int i) {
+    // find the edge orientation
     const edge_t* face_edge = &face_edges[face][i];
+    // find the physical edge at the orientation
     const edge_t* edge = &es->edges[face_edge->eid];
+    // find the inverse flip of the physical edge
     uint8_t facelet_flip = positive_modulo(face_edge->flip - edge->flip, 2);
+    // return the facelet at the found flip
     return edge_facelets[edge->eid][facelet_flip];
 }
 
@@ -215,6 +240,7 @@ bool isSolvedCube(const cube_t* cube) {
 }
 
 bool isSolvedCornerSystem(const cornersystem_t* cs) {
+    // corner ids should be in ascending order, corners should not be rotated
     for (int i = 0; i < 8; i++) {
         if (cs->corners[i].cid != i || cs->corners[i].rotation != 0) {
             return false;
@@ -224,6 +250,7 @@ bool isSolvedCornerSystem(const cornersystem_t* cs) {
 }
 
 bool isSolvedEdgeSystem(const edgesystem_t* es) {
+    // edge ids should be in ascending order, edges should not be flipped
     for (int i = 0; i < 12; i++) {
         if (es->edges[i].eid != i || es->edges[i].flip != 0) {
             return false;
@@ -234,6 +261,7 @@ bool isSolvedEdgeSystem(const edgesystem_t* es) {
 
 void shuffleCube(cube_t* cube, int iterations) {
     srand(time(NULL));
+    // don't turn the same face twice in a row for a better shuffle
     uint8_t last_face = 6;
     for (int i = 0; i < iterations; i++) {
         uint8_t face;
@@ -243,49 +271,6 @@ void shuffleCube(cube_t* cube, int iterations) {
         int turn_type = rand() % 3 + 1;
         turnCubeSelf(cube, face, turn_type);
         last_face = face;
-    }
-}
-
-void printCube(const cube_t* cube) {
-    for (int face = 0; face < 6; face++) {
-        for (int i = 0; i < 8; i++) {
-            printf("%d", getFaceletCube(cube, face, i));
-        }
-        putchar('\n');
-    }
-}
-
-static char face_chars[] = {'U', 'L', 'F', 'R', 'B', 'D'};
-
-static char turn_chars[] = {'?', ' ', '2', '\''};
-
-void printCubeMove(uint8_t face, int turn_type) {
-    putchar(face_chars[face]);
-    putchar(turn_chars[turn_type]);
-    putchar('\n');
-}
-
-void printCornerSystem(const cornersystem_t* cs) {
-    for (int i = 0; i < 8; i++) {
-        printf("%d, %d\n", cs->corners[i].cid, cs->corners[i].rotation);
-    }
-    for (uint8_t face = 0; face < 6; face++) {
-        for (int i = 0; i < 4; i++) {
-            printf("%d", getFaceletCornerSystem(cs, face, i));
-        }
-        putchar('\n');
-    }
-}
-
-void printEdgeSystem(const edgesystem_t* es) {
-    for (int i = 0; i < 12; i++) {
-        printf("%d, %d\n", es->edges[i].eid, es->edges[i].flip);
-    }
-    for (uint8_t face = 0; face < 6; face++) {
-        for (int i = 0; i < 4; i++) {
-            printf("%d", getFaceletEdgeSystem(es, face, i));
-        }
-        putchar('\n');
     }
 }
 

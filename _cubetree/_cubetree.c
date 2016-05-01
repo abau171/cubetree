@@ -4,7 +4,7 @@
 
 #include <cube.h>
 #include <lookup.h>
-#include <ida_star.h>
+#include <search.h>
 
 typedef struct {
     PyObject_HEAD
@@ -64,7 +64,7 @@ Cube_search_depth(_cubetree_CubeObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "i", &depth))
         return NULL;
     bool cancel_flag = false;
-    movenode_t* solution_node = searchDepth(&self->cube_state, depth, 6, &cancel_flag);
+    movenode_t* solution_node = searchDepth(&self->cube_state, depth, &cancel_flag);
     PyObject* solution_list = PyList_New(0);
     while (solution_node != NULL) {
         PyObject* move = PyTuple_New(2);
