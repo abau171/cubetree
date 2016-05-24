@@ -138,12 +138,37 @@ static PyTypeObject _cubetree_CubeType = {
     Cube_new,                     /* tp_new */
 };
 
+static PyObject*
+_cubetree_gen_corner_lookup(PyObject* self) {
+    genCornerLookup();
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+_cubetree_gen_upper_edge_lookup(PyObject* self) {
+    genUpperEdgeLookup();
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+_cubetree_gen_lower_edge_lookup(PyObject* self) {
+    genLowerEdgeLookup();
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef _cubetree_methods[] = {
+    {"gen_corner_lookup", (PyCFunction) _cubetree_gen_corner_lookup, METH_NOARGS, "Generates the corner lookup table."},
+    {"gen_upper_edge_lookup", (PyCFunction) _cubetree_gen_upper_edge_lookup, METH_NOARGS, "Generates the upper edge lookup table."},
+    {"gen_lower_edge_lookup", (PyCFunction) _cubetree_gen_lower_edge_lookup, METH_NOARGS, "Generates the lower edge lookup table."},
+    {NULL, NULL, 0, NULL}
+};
+
 static PyModuleDef _cubetreemodule = {
     PyModuleDef_HEAD_INIT,
     "_cubetree",
     "CubeTree C extensions.",
     -1,
-    NULL, NULL, NULL, NULL, NULL
+    _cubetree_methods
 };
 
 PyMODINIT_FUNC

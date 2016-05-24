@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 
 #include <cube.h>
 #include <lookup.h>
@@ -160,16 +161,25 @@ int encodeLowerEdgeSystem(const edgesystem_t* es) {
 
 /* generator functions */
 
+static void ensureCacheDirectory(void) {
+    struct stat st = {0};
+    if (stat("cache", &st) == -1) {
+        mkdir("cache", 0777);
+    }
+}
+
 void genCornerLookup() {
+    ensureCacheDirectory();
+    uint8_t* corner_lookup_buffer = malloc(CORNER_LOOKUP_SIZE * sizeof(uint8_t));
     for (int i = 0; i < CORNER_LOOKUP_SIZE; i++) {
-        corner_lookup[i] = 255;
+        corner_lookup_buffer[i] = 255;
     }
     corner_queuenode_t* queue = malloc(sizeof(corner_queuenode_t));
     queue->cs = solved_cornersystem;
     queue->distance = 0;
     queue->next = NULL;
     corner_queuenode_t* queue_end = queue;
-    corner_lookup[encodeCornerSystem(&(queue->cs))] = 0;
+    corner_lookup_buffer[encodeCornerSystem(&(queue->cs))] = 0;
     int count = 0;
     while (queue != NULL) {
         count += 1;
@@ -181,8 +191,8 @@ void genCornerLookup() {
                 cornersystem_t new_cs;
                 turnCornerSystem(&new_cs, &queue->cs, face, turn_type);
                 int code = encodeCornerSystem(&new_cs);
-                if (corner_lookup[code] == 255) {
-                    corner_lookup[code] = queue->distance + 1;
+                if (corner_lookup_buffer[code] == 255) {
+                    corner_lookup_buffer[code] = queue->distance + 1;
                     corner_queuenode_t* new_end = malloc(sizeof(corner_queuenode_t));
                     new_end->cs = new_cs;
                     new_end->distance = queue->distance + 1;
@@ -196,18 +206,24 @@ void genCornerLookup() {
         free(queue);
         queue = nextQueue;
     }
+    FILE* file = fopen("cache/corner.cache", "wb");
+    fwrite(corner_lookup_buffer, sizeof(char), CORNER_LOOKUP_SIZE, file);
+    fclose(file);
+    free(corner_lookup_buffer);
 }
 
 void genUpperEdgeLookup() {
+    ensureCacheDirectory();
+    uint8_t* upper_edge_lookup_buffer = malloc(EDGE_LOOKUP_SIZE * sizeof(uint8_t));
     for (int i = 0; i < EDGE_LOOKUP_SIZE; i++) {
-        upper_edge_lookup[i] = 255;
+        upper_edge_lookup_buffer[i] = 255;
     }
     edge_queuenode_t* queue = malloc(sizeof(edge_queuenode_t));
     queue->es = solved_edgesystem;
     queue->distance = 0;
     queue->next = NULL;
     edge_queuenode_t* queue_end = queue;
-    upper_edge_lookup[encodeUpperEdgeSystem(&(queue->es))] = 0;
+    upper_edge_lookup_buffer[encodeUpperEdgeSystem(&(queue->es))] = 0;
     int count = 0;
     while (queue != NULL) {
         count += 1;
@@ -219,8 +235,8 @@ void genUpperEdgeLookup() {
                 edgesystem_t new_es;
                 turnEdgeSystem(&new_es, &queue->es, face, turn_type);
                 int code = encodeUpperEdgeSystem(&new_es);
-                if (upper_edge_lookup[code] == 255) {
-                    upper_edge_lookup[code] = queue->distance + 1;
+                if (upper_edge_lookup_buffer[code] == 255) {
+                    upper_edge_lookup_buffer[code] = queue->distance + 1;
                     edge_queuenode_t* new_end = malloc(sizeof(edge_queuenode_t));
                     new_end->es = new_es;
                     new_end->distance = queue->distance + 1;
@@ -234,18 +250,24 @@ void genUpperEdgeLookup() {
         free(queue);
         queue = next_queue;
     }
+    FILE* file = fopen("cache/upper_edge.cache", "wb");
+    fwrite(upper_edge_lookup_buffer, sizeof(char), EDGE_LOOKUP_SIZE, file);
+    fclose(file);
+    free(upper_edge_lookup_buffer);
 }
 
 void genLowerEdgeLookup() {
+    ensureCacheDirectory();
+    uint8_t* lower_edge_lookup_buffer = malloc(EDGE_LOOKUP_SIZE * sizeof(uint8_t));
     for (int i = 0; i < EDGE_LOOKUP_SIZE; i++) {
-        lower_edge_lookup[i] = 255;
+        lower_edge_lookup_buffer[i] = 255;
     }
     edge_queuenode_t* queue = malloc(sizeof(edge_queuenode_t));
     queue->es = solved_edgesystem;
     queue->distance = 0;
     queue->next = NULL;
     edge_queuenode_t* queue_end = queue;
-    lower_edge_lookup[encodeLowerEdgeSystem(&(queue->es))] = 0;
+    lower_edge_lookup_buffer[encodeLowerEdgeSystem(&(queue->es))] = 0;
     int count = 0;
     while (queue != NULL) {
         count += 1;
@@ -257,8 +279,8 @@ void genLowerEdgeLookup() {
                 edgesystem_t new_es;
                 turnEdgeSystem(&new_es, &queue->es, face, turn_type);
                 int code = encodeLowerEdgeSystem(&new_es);
-                if (lower_edge_lookup[code] == 255) {
-                    lower_edge_lookup[code] = queue->distance + 1;
+                if (lower_edge_lookup_buffer[code] == 255) {
+                    lower_edge_lookup_buffer[code] = queue->distance + 1;
                     edge_queuenode_t* new_end = malloc(sizeof(edge_queuenode_t));
                     new_end->es = new_es;
                     new_end->distance = queue->distance + 1;
@@ -272,28 +294,14 @@ void genLowerEdgeLookup() {
         free(queue);
         queue = next_queue;
     }
+    FILE* file = fopen("cache/lower_edge.cache", "wb");
+    fwrite(lower_edge_lookup_buffer, sizeof(char), EDGE_LOOKUP_SIZE, file);
+    fclose(file);
+    free(lower_edge_lookup_buffer);
 }
 
 
 /* cache file management functions */
-
-void saveCornerLookup() {
-    FILE* file = fopen("cache/corner.cache", "wb");
-    fwrite(corner_lookup, sizeof(char), CORNER_LOOKUP_SIZE, file);
-    fclose(file);
-}
-
-void saveUpperEdgeLookup() {
-    FILE* file = fopen("cache/upper_edge.cache", "wb");
-    fwrite(upper_edge_lookup, sizeof(char), EDGE_LOOKUP_SIZE, file);
-    fclose(file);
-}
-
-void saveLowerEdgeLookup() {
-    FILE* file = fopen("cache/lower_edge.cache", "wb");
-    fwrite(lower_edge_lookup, sizeof(char), EDGE_LOOKUP_SIZE, file);
-    fclose(file);
-}
 
 void loadCornerLookup() {
     int fd = open("cache/corner.cache", O_RDONLY);
