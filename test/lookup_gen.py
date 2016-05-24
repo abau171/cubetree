@@ -1,6 +1,4 @@
-import _cubetree
+import cubetree
 
-print(_cubetree.gen_corner_lookup())
-print(_cubetree.gen_upper_edge_lookup())
-print(_cubetree.gen_lower_edge_lookup())
+cubetree.gen_lookups()
 

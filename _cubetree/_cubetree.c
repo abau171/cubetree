@@ -51,20 +51,14 @@ Cube_shuffle(_cubetree_CubeObject* self, PyObject* args) {
 }
 
 static PyObject*
-Cube_load_lookups(_cubetree_CubeObject* self) {
-    loadCornerLookup();
-    loadUpperEdgeLookup();
-    loadLowerEdgeLookup();
-    Py_RETURN_NONE;
-}
-
-static PyObject*
 Cube_search_depth(_cubetree_CubeObject* self, PyObject* args) {
     int depth;
     if (!PyArg_ParseTuple(args, "i", &depth))
         return NULL;
     bool cancel_flag = false;
     movenode_t* solution_node = searchDepth(&self->cube_state, depth, &cancel_flag);
+    if (solution_node == NULL)
+        Py_RETURN_NONE;
     PyObject* solution_list = PyList_New(0);
     while (solution_node != NULL) {
         PyObject* move = PyTuple_New(2);
@@ -92,8 +86,6 @@ static PyMethodDef Cube_methods[] = {
     "Gets the facelet color from a facelet id on the cube."},
     {"search_depth", (PyCFunction) Cube_search_depth, METH_VARARGS,
     "Searches the cube for a solution at a given depth."},
-    {"load_lookups", (PyCFunction) Cube_load_lookups, METH_NOARGS,
-    "Loads cached lookup tables from the filesystem."},
     {NULL} /* Sentinel */
 };
 
@@ -156,10 +148,19 @@ _cubetree_gen_lower_edge_lookup(PyObject* self) {
     Py_RETURN_NONE;
 }
 
+static PyObject*
+_cubetree_load_lookups(PyObject* self) {
+    loadCornerLookup();
+    loadUpperEdgeLookup();
+    loadLowerEdgeLookup();
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef _cubetree_methods[] = {
     {"gen_corner_lookup", (PyCFunction) _cubetree_gen_corner_lookup, METH_NOARGS, "Generates the corner lookup table."},
     {"gen_upper_edge_lookup", (PyCFunction) _cubetree_gen_upper_edge_lookup, METH_NOARGS, "Generates the upper edge lookup table."},
     {"gen_lower_edge_lookup", (PyCFunction) _cubetree_gen_lower_edge_lookup, METH_NOARGS, "Generates the lower edge lookup table."},
+    {"load_lookups", (PyCFunction) _cubetree_load_lookups, METH_NOARGS, "Loads the lookup tables into memory."},
     {NULL, NULL, 0, NULL}
 };
 

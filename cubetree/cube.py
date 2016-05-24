@@ -17,6 +17,9 @@ class Move:
         self.face = face
         self.turn_type = turn_type
 
+    def __str__(self):
+        return self.face.name + " " + self.turn_type.name
+
 
 class Cube:
 
@@ -54,6 +57,8 @@ class Cube:
 
     def search_depth(self, depth):
         raw_solution = self.raw_cube.search_depth(depth)
+        if raw_solution == None:
+            return None
         return [Move(Face(face_index), TurnType(turn_type_index)) for face_index, turn_type_index in raw_solution]
 
     def solve(self):
