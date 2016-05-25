@@ -71,3 +71,8 @@ class Cube:
             if len(possible_solution) > 0:
                 return possible_solution
 
+def cancel_checker():
+    return False
+
+_cubetree.set_cancel_checker(cancel_checker)
+

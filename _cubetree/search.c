@@ -47,9 +47,24 @@ static movenode_t* prependMoveNode(movenode_t* move_list, uint8_t face, int turn
     return new_move_list;
 }
 
-static movenode_t* searchDepth_rec(const cube_t* last_cube, int depth, uint8_t last_face, bool* cancel_flag) {
-    // at each call, verify the search was not cancelled
-    if (*cancel_flag) return NULL;
+static long search_count;
+static bool cancel_flag;
+static bool (*cancel_checker)(void);
+
+void set_cancel_checker(bool (*checker)(void)) {
+    cancel_checker = checker;
+}
+
+void cancel_search(void) {
+    cancel_flag = true;
+}
+
+static movenode_t* searchDepth_rec(const cube_t* last_cube, int depth, uint8_t last_face) {
+    if (search_count % 1000000 == 0) {
+        cancel_flag = cancel_checker();
+    }
+    search_count++;
+    if (cancel_flag) return NULL;
     cube_t cur_cube;
     // for each face and turn type combination
     for (uint8_t face = 0; face < 6; face++) {
@@ -66,7 +81,7 @@ static movenode_t* searchDepth_rec(const cube_t* last_cube, int depth, uint8_t l
             // otherwise, if the state doesn't need to be pruned, search deeper
             } else if (!prune_state(&cur_cube, depth - 1)) {
                 // save the solution so far, and simply prepend the recursive solution to it
-                movenode_t* partial_solution = searchDepth_rec(&cur_cube, depth - 1, face, cancel_flag);
+                movenode_t* partial_solution = searchDepth_rec(&cur_cube, depth - 1, face);
                 if (partial_solution != NULL) {
                     return prependMoveNode(partial_solution, face, turn_type);
                 }
@@ -76,13 +91,15 @@ static movenode_t* searchDepth_rec(const cube_t* last_cube, int depth, uint8_t l
     return NULL;
 }
 
-movenode_t* searchDepth(const cube_t* last_cube, int depth, bool* cancel_flag) {
+movenode_t* searchDepth(const cube_t* last_cube, int depth) {
     // if depth is 0, return immediately (result is NULL whether it is solved or not)
     if (depth == 0) {
         return NULL;
     // otherwise, perform an actual recursive search
     } else {
-        return searchDepth_rec(last_cube, depth, 6, cancel_flag);
+        search_count = 1;
+        cancel_flag = false;
+        return searchDepth_rec(last_cube, depth, 6);
     }
 }
 

@@ -50,13 +50,32 @@ Cube_shuffle(_cubetree_CubeObject* self, PyObject* args) {
     Py_RETURN_NONE;
 }
 
+static PyObject* py_cancel_checker;
+
+PyObject* _cubetree_set_py_cancel_checker(PyObject* self, PyObject* args) {
+    if (PyArg_ParseTuple(args, "O:callback", &py_cancel_checker)) {
+        Py_XINCREF(py_cancel_checker);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+static bool cancel_checker_proxy(void) {
+    PyObject* args = Py_BuildValue("()");
+    PyObject* cancel_result = PyEval_CallObject(py_cancel_checker, args);
+    Py_DECREF(args);
+    bool result = PyObject_IsTrue(cancel_result);
+    Py_DECREF(cancel_result);
+    return result;
+}
+
 static PyObject*
 Cube_search_depth(_cubetree_CubeObject* self, PyObject* args) {
     int depth;
     if (!PyArg_ParseTuple(args, "i", &depth))
         return NULL;
-    bool cancel_flag = false;
-    movenode_t* solution_node = searchDepth(&self->cube_state, depth, &cancel_flag);
+
+    movenode_t* solution_node = searchDepth(&self->cube_state, depth);
     if (solution_node == NULL)
         Py_RETURN_NONE;
     PyObject* solution_list = PyList_New(0);
@@ -161,6 +180,7 @@ static PyMethodDef _cubetree_methods[] = {
     {"gen_upper_edge_lookup", (PyCFunction) _cubetree_gen_upper_edge_lookup, METH_NOARGS, "Generates the upper edge lookup table."},
     {"gen_lower_edge_lookup", (PyCFunction) _cubetree_gen_lower_edge_lookup, METH_NOARGS, "Generates the lower edge lookup table."},
     {"load_lookups", (PyCFunction) _cubetree_load_lookups, METH_NOARGS, "Loads the lookup tables into memory."},
+    {"set_cancel_checker", (PyCFunction) _cubetree_set_py_cancel_checker, METH_VARARGS, "Sets the cancel checker callback function."},
     {NULL, NULL, 0, NULL}
 };
 
@@ -183,6 +203,7 @@ PyInit__cubetree(void)
         return NULL;
     Py_INCREF(&_cubetree_CubeType);
     PyModule_AddObject(m, "Cube", (PyObject*) &_cubetree_CubeType);
+    set_cancel_checker(&cancel_checker_proxy);
     return m;
 }
 
