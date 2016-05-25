@@ -7,11 +7,7 @@ cubetree.load_lookups()
 c = cubetree.Cube()
 c.shuffle(random_depth)
 
-solution = None
-for depth in range(random_depth + 1):
-    solution = c.search_depth(depth)
-    if solution != None:
-        break
+solution = cubetree.solve(c)
 if solution == None:
     print("no solution found")
 else:
