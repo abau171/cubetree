@@ -2,6 +2,8 @@ import enum
 
 import _cubetree
 
+from .cube import Face, TurnType
+
 
 class Move:
 
@@ -13,7 +15,7 @@ class Move:
         return self.face.name + " " + self.turn_type.name
 
 def search_depth(cube, depth):
-    raw_solution = cube.raw_cube.search_depth(depth)
+    raw_solution = _cubetree.search_depth(cube.raw_cube, depth)
     if raw_solution == None:
         return None
     return [Move(Face(face_index), TurnType(turn_type_index)) for face_index, turn_type_index in raw_solution]

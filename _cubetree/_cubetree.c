@@ -6,6 +6,8 @@
 #include <lookup.h>
 #include <search.h>
 
+static PyTypeObject _cubetree_CubeType;
+
 typedef struct {
     PyObject_HEAD
     cube_t cube_state;
@@ -80,12 +82,16 @@ static bool cancel_checker_proxy(void) {
 }
 
 static PyObject*
-Cube_search_depth(_cubetree_CubeObject* self, PyObject* args) {
+_cubetree_search_depth(PyObject* self, PyObject* args) {
+    PyObject* cube_pyobj;
+    _cubetree_CubeObject* cube;
     int depth;
-    if (!PyArg_ParseTuple(args, "i", &depth))
+    if (!PyArg_ParseTuple(args, "Oi", &cube_pyobj, &depth))
         return NULL;
-
-    movenode_t* solution_node = searchDepth(&self->cube_state, depth);
+    if (!PyObject_IsInstance(cube_pyobj, (PyObject*) &_cubetree_CubeType))
+        return NULL;
+    cube = (_cubetree_CubeObject*) cube_pyobj;
+    movenode_t* solution_node = searchDepth(&cube->cube_state, depth);
     if (solution_node == NULL)
         Py_RETURN_NONE;
     PyObject* solution_list = PyList_New(0);
@@ -115,8 +121,6 @@ static PyMethodDef Cube_methods[] = {
      "Shuffles the cube by turning a random face a number of times."},
     {"get_facelet", (PyCFunction) Cube_get_facelet, METH_VARARGS,
     "Gets the facelet color from a facelet id on the cube."},
-    {"search_depth", (PyCFunction) Cube_search_depth, METH_VARARGS,
-    "Searches the cube for a solution at a given depth."},
     {NULL} /* Sentinel */
 };
 
@@ -193,6 +197,8 @@ static PyMethodDef _cubetree_methods[] = {
     {"gen_lower_edge_lookup", (PyCFunction) _cubetree_gen_lower_edge_lookup, METH_NOARGS, "Generates the lower edge lookup table."},
     {"load_lookups", (PyCFunction) _cubetree_load_lookups, METH_NOARGS, "Loads the lookup tables into memory."},
     {"set_cancel_checker", (PyCFunction) _cubetree_set_py_cancel_checker, METH_VARARGS, "Sets the cancel checker callback function."},
+    {"search_depth", (PyCFunction) _cubetree_search_depth, METH_VARARGS,
+    "Searches the cube for a solution at a given depth."},
     {NULL, NULL, 0, NULL}
 };
 
