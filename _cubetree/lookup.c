@@ -23,9 +23,9 @@ static int ncr(int n, int r) {
 }
 
 /* mmaped lookup tables */
-static uint8_t* corner_lookup;
-static uint8_t* upper_edge_lookup;
-static uint8_t* lower_edge_lookup;
+static uint8_t corner_lookup[CORNER_LOOKUP_SIZE];
+static uint8_t upper_edge_lookup[EDGE_LOOKUP_SIZE];
+static uint8_t lower_edge_lookup[EDGE_LOOKUP_SIZE];
 
 /* generator queue node definitions*/
 
@@ -170,16 +170,15 @@ static void ensureCacheDirectory(void) {
 
 void genCornerLookup() {
     ensureCacheDirectory();
-    uint8_t* corner_lookup_buffer = malloc(CORNER_LOOKUP_SIZE * sizeof(uint8_t));
     for (int i = 0; i < CORNER_LOOKUP_SIZE; i++) {
-        corner_lookup_buffer[i] = 255;
+        corner_lookup[i] = 255;
     }
     corner_queuenode_t* queue = malloc(sizeof(corner_queuenode_t));
     queue->cs = solved_cornersystem;
     queue->distance = 0;
     queue->next = NULL;
     corner_queuenode_t* queue_end = queue;
-    corner_lookup_buffer[encodeCornerSystem(&(queue->cs))] = 0;
+    corner_lookup[encodeCornerSystem(&(queue->cs))] = 0;
     int count = 0;
     while (queue != NULL) {
         count += 1;
@@ -191,8 +190,8 @@ void genCornerLookup() {
                 cornersystem_t new_cs;
                 turnCornerSystem(&new_cs, &queue->cs, face, turn_type);
                 int code = encodeCornerSystem(&new_cs);
-                if (corner_lookup_buffer[code] == 255) {
-                    corner_lookup_buffer[code] = queue->distance + 1;
+                if (corner_lookup[code] == 255) {
+                    corner_lookup[code] = queue->distance + 1;
                     corner_queuenode_t* new_end = malloc(sizeof(corner_queuenode_t));
                     new_end->cs = new_cs;
                     new_end->distance = queue->distance + 1;
@@ -207,23 +206,22 @@ void genCornerLookup() {
         queue = nextQueue;
     }
     FILE* file = fopen("cache/corner.cache", "wb");
-    fwrite(corner_lookup_buffer, sizeof(char), CORNER_LOOKUP_SIZE, file);
+    fwrite(corner_lookup, sizeof(char), CORNER_LOOKUP_SIZE, file);
     fclose(file);
-    free(corner_lookup_buffer);
 }
 
 void genUpperEdgeLookup() {
     ensureCacheDirectory();
-    uint8_t* upper_edge_lookup_buffer = malloc(EDGE_LOOKUP_SIZE * sizeof(uint8_t));
+    uint8_t* upper_edge_lookup= malloc(EDGE_LOOKUP_SIZE * sizeof(uint8_t));
     for (int i = 0; i < EDGE_LOOKUP_SIZE; i++) {
-        upper_edge_lookup_buffer[i] = 255;
+        upper_edge_lookup[i] = 255;
     }
     edge_queuenode_t* queue = malloc(sizeof(edge_queuenode_t));
     queue->es = solved_edgesystem;
     queue->distance = 0;
     queue->next = NULL;
     edge_queuenode_t* queue_end = queue;
-    upper_edge_lookup_buffer[encodeUpperEdgeSystem(&(queue->es))] = 0;
+    upper_edge_lookup[encodeUpperEdgeSystem(&(queue->es))] = 0;
     int count = 0;
     while (queue != NULL) {
         count += 1;
@@ -235,8 +233,8 @@ void genUpperEdgeLookup() {
                 edgesystem_t new_es;
                 turnEdgeSystem(&new_es, &queue->es, face, turn_type);
                 int code = encodeUpperEdgeSystem(&new_es);
-                if (upper_edge_lookup_buffer[code] == 255) {
-                    upper_edge_lookup_buffer[code] = queue->distance + 1;
+                if (upper_edge_lookup[code] == 255) {
+                    upper_edge_lookup[code] = queue->distance + 1;
                     edge_queuenode_t* new_end = malloc(sizeof(edge_queuenode_t));
                     new_end->es = new_es;
                     new_end->distance = queue->distance + 1;
@@ -251,23 +249,22 @@ void genUpperEdgeLookup() {
         queue = next_queue;
     }
     FILE* file = fopen("cache/upper_edge.cache", "wb");
-    fwrite(upper_edge_lookup_buffer, sizeof(char), EDGE_LOOKUP_SIZE, file);
+    fwrite(upper_edge_lookup, sizeof(char), EDGE_LOOKUP_SIZE, file);
     fclose(file);
-    free(upper_edge_lookup_buffer);
 }
 
 void genLowerEdgeLookup() {
     ensureCacheDirectory();
-    uint8_t* lower_edge_lookup_buffer = malloc(EDGE_LOOKUP_SIZE * sizeof(uint8_t));
+    uint8_t* lower_edge_lookup = malloc(EDGE_LOOKUP_SIZE * sizeof(uint8_t));
     for (int i = 0; i < EDGE_LOOKUP_SIZE; i++) {
-        lower_edge_lookup_buffer[i] = 255;
+        lower_edge_lookup[i] = 255;
     }
     edge_queuenode_t* queue = malloc(sizeof(edge_queuenode_t));
     queue->es = solved_edgesystem;
     queue->distance = 0;
     queue->next = NULL;
     edge_queuenode_t* queue_end = queue;
-    lower_edge_lookup_buffer[encodeLowerEdgeSystem(&(queue->es))] = 0;
+    lower_edge_lookup[encodeLowerEdgeSystem(&(queue->es))] = 0;
     int count = 0;
     while (queue != NULL) {
         count += 1;
@@ -279,8 +276,8 @@ void genLowerEdgeLookup() {
                 edgesystem_t new_es;
                 turnEdgeSystem(&new_es, &queue->es, face, turn_type);
                 int code = encodeLowerEdgeSystem(&new_es);
-                if (lower_edge_lookup_buffer[code] == 255) {
-                    lower_edge_lookup_buffer[code] = queue->distance + 1;
+                if (lower_edge_lookup[code] == 255) {
+                    lower_edge_lookup[code] = queue->distance + 1;
                     edge_queuenode_t* new_end = malloc(sizeof(edge_queuenode_t));
                     new_end->es = new_es;
                     new_end->distance = queue->distance + 1;
@@ -295,32 +292,31 @@ void genLowerEdgeLookup() {
         queue = next_queue;
     }
     FILE* file = fopen("cache/lower_edge.cache", "wb");
-    fwrite(lower_edge_lookup_buffer, sizeof(char), EDGE_LOOKUP_SIZE, file);
+    fwrite(lower_edge_lookup, sizeof(char), EDGE_LOOKUP_SIZE, file);
     fclose(file);
-    free(lower_edge_lookup_buffer);
 }
 
 
 /* cache file management functions */
 
 void loadCornerLookup() {
-    int fd = open("cache/corner.cache", O_RDONLY);
-    corner_lookup = mmap(NULL, CORNER_LOOKUP_SIZE * sizeof(uint8_t), PROT_READ, MAP_SHARED | MAP_POPULATE, fd, 0);
-    close(fd);
-    mlock(corner_lookup, CORNER_LOOKUP_SIZE * sizeof(uint8_t));
+    FILE* file = fopen("cache/corner.cache", "rb");
+    size_t bytes_read = fread(corner_lookup, sizeof(uint8_t), CORNER_LOOKUP_SIZE, file);
+    (void) bytes_read;
+    fclose(file);
 }
 
 void loadUpperEdgeLookup() {
-    int fd = open("cache/upper_edge.cache", O_RDONLY);
-    upper_edge_lookup = mmap(NULL, EDGE_LOOKUP_SIZE * sizeof(uint8_t), PROT_READ, MAP_SHARED | MAP_POPULATE, fd, 0);
-    close(fd);
-    mlock(upper_edge_lookup, CORNER_LOOKUP_SIZE * sizeof(uint8_t));
+    FILE* file = fopen("cache/upper_edge.cache", "rb");
+    size_t bytes_read = fread(upper_edge_lookup, sizeof(uint8_t), EDGE_LOOKUP_SIZE, file);
+    (void) bytes_read;
+    fclose(file);
 }
 
 void loadLowerEdgeLookup() {
-    int fd = open("cache/lower_edge.cache", O_RDONLY);
-    lower_edge_lookup = mmap(NULL, EDGE_LOOKUP_SIZE * sizeof(uint8_t), PROT_READ, MAP_SHARED | MAP_POPULATE, fd, 0);
-    close(fd);
-    mlock(lower_edge_lookup, CORNER_LOOKUP_SIZE * sizeof(uint8_t));
+    FILE* file = fopen("cache/lower_edge.cache", "rb");
+    size_t bytes_read = fread(lower_edge_lookup, sizeof(uint8_t), EDGE_LOOKUP_SIZE, file);
+    (void) bytes_read;
+    fclose(file);
 }
 
