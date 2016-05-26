@@ -36,6 +36,9 @@ class Cube:
             result += "     " + self._row_str(5, row) + "\n"
         return result
 
+    def get_state(self):
+        return self.raw_cube.get_state()
+
     def is_solved(self):
         return self.raw_cube.is_solved()
 

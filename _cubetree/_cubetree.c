@@ -25,6 +25,33 @@ Cube_new(PyTypeObject* type, PyObject* args, PyObject* kwds)
 }
 
 static PyObject*
+Cube_get_state(_cubetree_CubeObject* self)
+{
+    long raw_cube_data[40];
+    for (int i = 0; i < 8; i++) {
+        raw_cube_data[2 * i] = self->cube_state.cornersystem.corners[i].cid;
+        raw_cube_data[2 * i + 1] = self->cube_state.cornersystem.corners[i].rotation;
+    }
+    for (int i = 0; i < 12; i++) {
+        raw_cube_data[16 + 2 * i] = self->cube_state.edgesystem.edges[i].eid;
+        raw_cube_data[17 + 2 * i] = self->cube_state.edgesystem.edges[i].flip;
+    }
+
+    PyObject* cube_data = PyTuple_New(40);
+    if (cube_data == NULL)
+        return NULL;
+    for (Py_ssize_t i = 0; i < 40; i++) {
+        PyObject* item = PyLong_FromLong(raw_cube_data[i]);
+        if (item == NULL) {
+            Py_DECREF(cube_data);
+            return NULL;
+        }
+        PyTuple_SET_ITEM(cube_data, i, item);
+    }
+    return cube_data;
+}
+
+static PyObject*
 Cube_get_facelet(_cubetree_CubeObject* self, PyObject* args) {
     int face;
     int i;
@@ -113,6 +140,8 @@ _cubetree_search_depth(PyObject* self, PyObject* args) {
 }
 
 static PyMethodDef Cube_methods[] = {
+    {"get_state", (PyCFunction) Cube_get_state, METH_NOARGS,
+     "Returns a tuple of numbers representing the cube's state."},
     {"is_solved", (PyCFunction) Cube_is_solved, METH_NOARGS,
      "Returns True if the cube is solved, False otherwise."},
     {"turn", (PyCFunction) Cube_turn, METH_VARARGS,
