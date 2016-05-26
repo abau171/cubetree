@@ -13,8 +13,12 @@ class TurnType(enum.Enum):
 
 class Cube:
 
-    def __init__(self):
-        self.raw_cube = _cubetree.Cube()
+    def __init__(self, state=None):
+        
+        if state == None:
+            self.raw_cube = _cubetree.Cube()
+        else:
+            self.raw_cube = _cubetree.Cube(state)
 
     def _row_str(self, face, row):
         if row == 0:

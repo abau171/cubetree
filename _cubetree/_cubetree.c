@@ -18,10 +18,41 @@ Cube_new(PyTypeObject* type, PyObject* args, PyObject* kwds)
 {
     _cubetree_CubeObject* self;
     self = (_cubetree_CubeObject*) type->tp_alloc(type, 0);
-    if (self != NULL) {
-        self->cube_state = solved_cube;
-    }
     return (PyObject*) self;
+}
+
+static PyObject*
+Cube_init(_cubetree_CubeObject* self, PyObject* args)
+{
+    PyObject* cube_data = NULL;
+    if (!PyArg_ParseTuple(args, "|O!", &PyTuple_Type, &cube_data))
+        return NULL;
+
+    if (cube_data == NULL) {
+        self->cube_state = solved_cube;
+        Py_RETURN_NONE;
+    }
+
+    long raw_cube_data[40];
+    for (Py_ssize_t i = 0; i < 40; i++) {
+        PyObject* item = PyTuple_GetItem(cube_data, i);
+        if (item == NULL)
+            return NULL;
+        long raw_data = PyLong_AsLong(item);
+        if (raw_data == -1 && PyErr_Occurred())
+            return NULL;
+        raw_cube_data[i] = raw_data;
+    }
+
+    for (int i = 0; i < 8; i++) {
+        self->cube_state.cornersystem.corners[i].cid = raw_cube_data[2 * i];
+        self->cube_state.cornersystem.corners[i].rotation = raw_cube_data[2 * i + 1];
+    }
+    for (int i = 0; i < 12; i++) {
+        self->cube_state.edgesystem.edges[i].eid = raw_cube_data[16 + 2 * i];
+        self->cube_state.edgesystem.edges[i].flip = raw_cube_data[17 + 2 * i];
+    }
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -189,7 +220,7 @@ static PyTypeObject _cubetree_CubeType = {
     0,                            /* tp_descr_get */
     0,                            /* tp_descr_set */
     0,                            /* tp_dictoffset */
-    0,                            /* tp_init */
+    (initproc) Cube_init,         /* tp_init */
     0,                            /* tp_alloc */
     Cube_new,                     /* tp_new */
 };
