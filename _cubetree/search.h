@@ -13,7 +13,6 @@ typedef struct movenode_t {
 } movenode_t;
 
 void set_cancel_checker(bool (*checker)(void));
-void cancel_search(void);
 
 /* search the cube for a solution at the given depth */
 movenode_t* searchDepth(const cube_t* last_cube, int depth);

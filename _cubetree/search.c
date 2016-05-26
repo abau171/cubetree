@@ -55,10 +55,6 @@ void set_cancel_checker(bool (*checker)(void)) {
     cancel_checker = checker;
 }
 
-void cancel_search(void) {
-    cancel_flag = true;
-}
-
 static movenode_t* searchDepth_rec(const cube_t* last_cube, int depth, uint8_t last_face) {
     if (search_count % 1000000 == 0) {
         cancel_flag = cancel_checker();
