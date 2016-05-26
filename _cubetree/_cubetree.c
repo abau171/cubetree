@@ -42,6 +42,16 @@ Cube_is_solved(_cubetree_CubeObject* self) {
 }
 
 static PyObject*
+Cube_turn(_cubetree_CubeObject* self, PyObject* args) {
+    uint8_t face;
+    int turn_type;
+    if (!PyArg_ParseTuple(args, "bi", &face, &turn_type))
+        return NULL;
+    turnCubeSelf(&self->cube_state, face, turn_type);
+    Py_RETURN_NONE;
+}
+
+static PyObject*
 Cube_shuffle(_cubetree_CubeObject* self, PyObject* args) {
     int iterations;
     if (!PyArg_ParseTuple(args, "i", &iterations))
@@ -99,6 +109,8 @@ Cube_search_depth(_cubetree_CubeObject* self, PyObject* args) {
 static PyMethodDef Cube_methods[] = {
     {"is_solved", (PyCFunction) Cube_is_solved, METH_NOARGS,
      "Returns True if the cube is solved, False otherwise."},
+    {"turn", (PyCFunction) Cube_turn, METH_VARARGS,
+     "Turns the cube, given a face and turn type."},
     {"shuffle", (PyCFunction) Cube_shuffle, METH_VARARGS,
      "Shuffles the cube by turning a random face a number of times."},
     {"get_facelet", (PyCFunction) Cube_get_facelet, METH_VARARGS,

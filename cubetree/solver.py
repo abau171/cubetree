@@ -2,13 +2,6 @@ import enum
 
 import _cubetree
 
-class Face(enum.Enum):
-    UP, LEFT, FRONT, RIGHT, BACK, DOWN = range(6)
-
-
-class TurnType(enum.Enum):
-    NO_TURN, CLOCKWISE, DOUBLE, COUNTER = range(4)
-
 
 class Move:
 
