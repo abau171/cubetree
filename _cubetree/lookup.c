@@ -299,24 +299,36 @@ void genLowerEdgeLookup() {
 
 /* cache file management functions */
 
-void loadCornerLookup() {
+int loadCornerLookup() {
     FILE* file = fopen("cache/corner.cache", "rb");
+    if (file == NULL)
+        return -1;
     size_t bytes_read = fread(corner_lookup, sizeof(uint8_t), CORNER_LOOKUP_SIZE, file);
-    (void) bytes_read;
     fclose(file);
+    if (bytes_read < CORNER_LOOKUP_SIZE);
+        return -1;
+    return 0;
 }
 
-void loadUpperEdgeLookup() {
+int loadUpperEdgeLookup() {
     FILE* file = fopen("cache/upper_edge.cache", "rb");
+    if (file == NULL)
+        return -1;
     size_t bytes_read = fread(upper_edge_lookup, sizeof(uint8_t), EDGE_LOOKUP_SIZE, file);
-    (void) bytes_read;
     fclose(file);
+    if (bytes_read < EDGE_LOOKUP_SIZE);
+        return -1;
+    return 0;
 }
 
-void loadLowerEdgeLookup() {
+int loadLowerEdgeLookup() {
     FILE* file = fopen("cache/lower_edge.cache", "rb");
+    if (file == NULL)
+        return -1;
     size_t bytes_read = fread(lower_edge_lookup, sizeof(uint8_t), EDGE_LOOKUP_SIZE, file);
-    (void) bytes_read;
     fclose(file);
+    if (bytes_read < EDGE_LOOKUP_SIZE);
+        return -1;
+    return 0;
 }
 
