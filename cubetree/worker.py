@@ -1,7 +1,7 @@
 import random
 
-from .cube import Cube
-from .solver import search_depth, set_cancel_checker
+from cubetree.cube import Cube
+from cubetree.solver import search_depth, set_cancel_checker
 
 # TEMPORARY FAKES
 

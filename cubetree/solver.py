@@ -2,7 +2,7 @@ import enum
 
 import _cubetree
 
-from .cube import Face, TurnType
+from cubetree.cube import Face, TurnType
 
 
 class Move:
