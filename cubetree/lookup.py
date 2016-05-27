@@ -73,3 +73,6 @@ def gen_lookups():
         gen_lower_edge_lookup()
         save_lower_edge_lookup()
 
+def set_lookup_cancel_checker(cancel_checker):
+    _cubetree.set_lookup_cancel_checker(cancel_checker)
+

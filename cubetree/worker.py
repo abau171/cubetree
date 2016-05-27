@@ -1,7 +1,7 @@
 import random
 
 from cubetree.cube import Cube
-from cubetree.solver import search_depth, set_cancel_checker
+from cubetree.solver import search_depth, set_search_cancel_checker
 
 # TEMPORARY FAKES
 
@@ -26,7 +26,7 @@ class FakeWorkerConnection:
 
 def worker(hostname, port):
     conn = FakeWorkerConnection(hostname, port)
-    set_cancel_checker(conn.check_cancel)
+    set_search_cancel_checker(conn.check_cancel)
     while True:
         cube, depth = conn.get_job()
         result = search_depth(cube, depth)

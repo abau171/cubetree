@@ -51,7 +51,7 @@ static long search_count;
 static bool cancel_flag;
 static bool (*cancel_checker)(void);
 
-void set_cancel_checker(bool (*checker)(void)) {
+void set_search_cancel_checker(bool (*checker)(void)) {
     cancel_checker = checker;
 }
 

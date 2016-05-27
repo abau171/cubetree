@@ -30,6 +30,6 @@ def solve(cube):
         if possible_solution != None:
             return possible_solution
 
-def set_cancel_checker(cancel_checker):
-    _cubetree.set_cancel_checker(cancel_checker)
+def set_search_cancel_checker(cancel_checker):
+    _cubetree.set_search_cancel_checker(cancel_checker)
 

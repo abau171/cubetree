@@ -7,23 +7,46 @@
 #include <search.h>
 #include <_cubetree_Cube.h>
 
-static PyObject* py_cancel_checker;
+static PyObject* py_search_cancel_checker;
 
 static PyObject*
-_cubetree_set_py_cancel_checker(PyObject* self, PyObject* args)
+_cubetree_set_py_search_cancel_checker(PyObject* self, PyObject* args)
 {
-    if (PyArg_ParseTuple(args, "O:callback", &py_cancel_checker)) {
-        Py_XINCREF(py_cancel_checker);
+    if (PyArg_ParseTuple(args, "O:callback", &py_search_cancel_checker)) {
+        Py_XINCREF(py_search_cancel_checker);
         Py_RETURN_NONE;
     }
     return NULL;
 }
 
 static bool
-cancel_checker_proxy(void)
+search_cancel_checker_proxy(void)
 {
     PyObject* args = Py_BuildValue("()");
-    PyObject* cancel_result = PyEval_CallObject(py_cancel_checker, args);
+    PyObject* cancel_result = PyEval_CallObject(py_search_cancel_checker, args);
+    Py_DECREF(args);
+    bool result = PyObject_IsTrue(cancel_result);
+    Py_DECREF(cancel_result);
+    return result;
+}
+
+static PyObject* py_lookup_cancel_checker;
+
+static PyObject*
+_cubetree_set_py_lookup_cancel_checker(PyObject* self, PyObject* args)
+{
+    if (PyArg_ParseTuple(args, "O:callback", &py_lookup_cancel_checker)) {
+        Py_XINCREF(py_lookup_cancel_checker);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+static bool
+lookup_cancel_checker_proxy(int count, int total)
+{
+    PyObject* args = Py_BuildValue("ii", count, total);
+    PyObject* cancel_result = PyEval_CallObject(py_lookup_cancel_checker, args);
     Py_DECREF(args);
     bool result = PyObject_IsTrue(cancel_result);
     Py_DECREF(cancel_result);
@@ -147,7 +170,8 @@ static PyMethodDef _cubetree_methods[] = {
     {"save_corner_lookup", (PyCFunction) _cubetree_save_corner_lookup, METH_NOARGS, "Saves the corner lookup table to a file."},
     {"save_upper_edge_lookup", (PyCFunction) _cubetree_save_upper_edge_lookup, METH_NOARGS, "Saves the upper edge lookup table to a file"},
     {"save_lower_edge_lookup", (PyCFunction) _cubetree_save_lower_edge_lookup, METH_NOARGS, "Saves the lower edge lookup table to a file."},
-    {"set_cancel_checker", (PyCFunction) _cubetree_set_py_cancel_checker, METH_VARARGS, "Sets the cancel checker callback function."},
+    {"set_search_cancel_checker", (PyCFunction) _cubetree_set_py_search_cancel_checker, METH_VARARGS, "Sets the search cancel checker callback function."},
+    {"set_lookup_cancel_checker", (PyCFunction) _cubetree_set_py_lookup_cancel_checker, METH_VARARGS, "Sets the lookup cancel checker callback function."},
     {"search_depth", (PyCFunction) _cubetree_search_depth, METH_VARARGS,
     "Searches the cube for a solution at a given depth."},
     {NULL, NULL, 0, NULL}
@@ -172,7 +196,8 @@ PyInit__cubetree(void)
         return NULL;
     Py_INCREF(&_cubetree_CubeType);
     PyModule_AddObject(m, "Cube", (PyObject*) &_cubetree_CubeType);
-    set_cancel_checker(&cancel_checker_proxy);
+    set_search_cancel_checker(&search_cancel_checker_proxy);
+    set_lookup_cancel_checker(&lookup_cancel_checker_proxy);
     return m;
 }
 
