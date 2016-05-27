@@ -86,22 +86,55 @@ _cubetree_gen_lower_edge_lookup(PyObject* self)
 static PyObject*
 _cubetree_load_corner_lookup(PyObject* self)
 {
-    loadCornerLookup();
-    Py_RETURN_NONE;
+    if (loadCornerLookup())
+        Py_RETURN_TRUE;
+    else
+        Py_RETURN_FALSE;
 }
 
 static PyObject*
 _cubetree_load_upper_edge_lookup(PyObject* self)
 {
-    loadUpperEdgeLookup();
-    Py_RETURN_NONE;
+    if (loadUpperEdgeLookup())
+        Py_RETURN_TRUE;
+    else
+        Py_RETURN_FALSE;
 }
 
 static PyObject*
 _cubetree_load_lower_edge_lookup(PyObject* self)
 {
-    loadLowerEdgeLookup();
-    Py_RETURN_NONE;
+    if (loadLowerEdgeLookup())
+        Py_RETURN_TRUE;
+    else
+        Py_RETURN_FALSE;
+}
+
+static PyObject*
+_cubetree_save_corner_lookup(PyObject* self)
+{
+    if (saveCornerLookup())
+        Py_RETURN_TRUE;
+    else
+        Py_RETURN_FALSE;
+}
+
+static PyObject*
+_cubetree_save_upper_edge_lookup(PyObject* self)
+{
+    if (saveUpperEdgeLookup())
+        Py_RETURN_TRUE;
+    else
+        Py_RETURN_FALSE;
+}
+
+static PyObject*
+_cubetree_save_lower_edge_lookup(PyObject* self)
+{
+    if (saveLowerEdgeLookup())
+        Py_RETURN_TRUE;
+    else
+        Py_RETURN_FALSE;
 }
 
 static PyMethodDef _cubetree_methods[] = {
@@ -111,6 +144,9 @@ static PyMethodDef _cubetree_methods[] = {
     {"load_corner_lookup", (PyCFunction) _cubetree_load_corner_lookup, METH_NOARGS, "Loads the corner lookup table into memory."},
     {"load_upper_edge_lookup", (PyCFunction) _cubetree_load_upper_edge_lookup, METH_NOARGS, "Loads the upper edge lookup table into memory."},
     {"load_lower_edge_lookup", (PyCFunction) _cubetree_load_lower_edge_lookup, METH_NOARGS, "Loads the lower edge lookup table into memory."},
+    {"save_corner_lookup", (PyCFunction) _cubetree_save_corner_lookup, METH_NOARGS, "Saves the corner lookup table to a file."},
+    {"save_upper_edge_lookup", (PyCFunction) _cubetree_save_upper_edge_lookup, METH_NOARGS, "Saves the upper edge lookup table to a file"},
+    {"save_lower_edge_lookup", (PyCFunction) _cubetree_save_lower_edge_lookup, METH_NOARGS, "Saves the lower edge lookup table to a file."},
     {"set_cancel_checker", (PyCFunction) _cubetree_set_py_cancel_checker, METH_VARARGS, "Sets the cancel checker callback function."},
     {"search_depth", (PyCFunction) _cubetree_search_depth, METH_VARARGS,
     "Searches the cube for a solution at a given depth."},

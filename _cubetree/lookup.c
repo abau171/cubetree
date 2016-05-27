@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -161,15 +162,7 @@ int encodeLowerEdgeSystem(const edgesystem_t* es) {
 
 /* generator functions */
 
-static void ensureCacheDirectory(void) {
-    struct stat st = {0};
-    if (stat("cache", &st) == -1) {
-        mkdir("cache", 0777);
-    }
-}
-
 void genCornerLookup() {
-    ensureCacheDirectory();
     for (int i = 0; i < CORNER_LOOKUP_SIZE; i++) {
         corner_lookup[i] = 255;
     }
@@ -205,14 +198,9 @@ void genCornerLookup() {
         free(queue);
         queue = nextQueue;
     }
-    FILE* file = fopen("cache/corner.cache", "wb");
-    fwrite(corner_lookup, sizeof(char), CORNER_LOOKUP_SIZE, file);
-    fclose(file);
 }
 
 void genUpperEdgeLookup() {
-    ensureCacheDirectory();
-    uint8_t* upper_edge_lookup= malloc(EDGE_LOOKUP_SIZE * sizeof(uint8_t));
     for (int i = 0; i < EDGE_LOOKUP_SIZE; i++) {
         upper_edge_lookup[i] = 255;
     }
@@ -248,14 +236,9 @@ void genUpperEdgeLookup() {
         free(queue);
         queue = next_queue;
     }
-    FILE* file = fopen("cache/upper_edge.cache", "wb");
-    fwrite(upper_edge_lookup, sizeof(char), EDGE_LOOKUP_SIZE, file);
-    fclose(file);
 }
 
 void genLowerEdgeLookup() {
-    ensureCacheDirectory();
-    uint8_t* lower_edge_lookup = malloc(EDGE_LOOKUP_SIZE * sizeof(uint8_t));
     for (int i = 0; i < EDGE_LOOKUP_SIZE; i++) {
         lower_edge_lookup[i] = 255;
     }
@@ -291,44 +274,74 @@ void genLowerEdgeLookup() {
         free(queue);
         queue = next_queue;
     }
-    FILE* file = fopen("cache/lower_edge.cache", "wb");
-    fwrite(lower_edge_lookup, sizeof(char), EDGE_LOOKUP_SIZE, file);
-    fclose(file);
 }
 
 
 /* cache file management functions */
 
-int loadCornerLookup() {
+bool loadCornerLookup() {
     FILE* file = fopen("cache/corner.cache", "rb");
     if (file == NULL)
-        return -1;
+        return false;
     size_t bytes_read = fread(corner_lookup, sizeof(uint8_t), CORNER_LOOKUP_SIZE, file);
     fclose(file);
-    if (bytes_read < CORNER_LOOKUP_SIZE);
-        return -1;
-    return 0;
+    if (bytes_read < CORNER_LOOKUP_SIZE)
+        return false;
+    return true;
 }
 
-int loadUpperEdgeLookup() {
+bool loadUpperEdgeLookup() {
     FILE* file = fopen("cache/upper_edge.cache", "rb");
     if (file == NULL)
-        return -1;
+        return false;
     size_t bytes_read = fread(upper_edge_lookup, sizeof(uint8_t), EDGE_LOOKUP_SIZE, file);
     fclose(file);
-    if (bytes_read < EDGE_LOOKUP_SIZE);
-        return -1;
-    return 0;
+    if (bytes_read < EDGE_LOOKUP_SIZE)
+        return false;
+    return true;
 }
 
-int loadLowerEdgeLookup() {
+bool loadLowerEdgeLookup() {
     FILE* file = fopen("cache/lower_edge.cache", "rb");
     if (file == NULL)
-        return -1;
+        return false;
     size_t bytes_read = fread(lower_edge_lookup, sizeof(uint8_t), EDGE_LOOKUP_SIZE, file);
     fclose(file);
-    if (bytes_read < EDGE_LOOKUP_SIZE);
-        return -1;
-    return 0;
+    if (bytes_read < EDGE_LOOKUP_SIZE)
+        return false;
+    return true;
+}
+
+bool saveCornerLookup() {
+    FILE* file = fopen("cache/corner.cache", "wb");
+    if (file == NULL)
+        return false;
+    size_t bytes_written = fwrite(corner_lookup, sizeof(uint8_t), CORNER_LOOKUP_SIZE, file);
+    fclose(file);
+    if (bytes_written < CORNER_LOOKUP_SIZE)
+        return false;
+    return true;
+}
+
+bool saveUpperEdgeLookup() {
+    FILE* file = fopen("cache/upper_edge.cache", "wb");
+    if (file == NULL)
+        return false;
+    size_t bytes_written = fwrite(upper_edge_lookup, sizeof(uint8_t), EDGE_LOOKUP_SIZE, file);
+    fclose(file);
+    if (bytes_written < EDGE_LOOKUP_SIZE)
+        return false;
+    return true;
+}
+
+bool saveLowerEdgeLookup() {
+    FILE* file = fopen("cache/lower_edge.cache", "wb");
+    if (file == NULL)
+        return false;
+    size_t bytes_written = fwrite(lower_edge_lookup, sizeof(uint8_t), EDGE_LOOKUP_SIZE, file);
+    fclose(file);
+    if (bytes_written < EDGE_LOOKUP_SIZE)
+        return false;
+    return true;
 }
 

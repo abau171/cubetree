@@ -17,9 +17,12 @@ void genUpperEdgeLookup(void);
 void genLowerEdgeLookup(void);
 
 /* cache file management functions */
-int loadCornerLookup(void);
-int loadUpperEdgeLookup(void);
-int loadLowerEdgeLookup(void);
+bool loadCornerLookup(void);
+bool loadUpperEdgeLookup(void);
+bool loadLowerEdgeLookup(void);
+bool saveCornerLookup(void);
+bool saveUpperEdgeLookup(void);
+bool saveLowerEdgeLookup(void);
 
 #endif
 
