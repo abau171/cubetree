@@ -47,20 +47,7 @@ static movenode_t* prependMoveNode(movenode_t* move_list, uint8_t face, int turn
     return new_move_list;
 }
 
-static long search_count;
-static bool cancel_flag;
-static bool (*cancel_checker)(void);
-
-void set_search_cancel_checker(bool (*checker)(void)) {
-    cancel_checker = checker;
-}
-
 static movenode_t* searchDepth_rec(const cube_t* last_cube, int depth, uint8_t last_face) {
-    if (search_count % 1000000 == 0) {
-        cancel_flag = cancel_checker();
-    }
-    search_count++;
-    if (cancel_flag) return NULL;
     cube_t cur_cube;
     // for each face and turn type combination
     for (uint8_t face = 0; face < 6; face++) {
@@ -93,8 +80,6 @@ movenode_t* searchDepth(const cube_t* last_cube, int depth) {
         return NULL;
     // otherwise, perform an actual recursive search
     } else {
-        search_count = 1;
-        cancel_flag = false;
         return searchDepth_rec(last_cube, depth, 6);
     }
 }

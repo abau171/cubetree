@@ -119,6 +119,34 @@ Cube_shuffle(_cubetree_CubeObject* self, PyObject* args)
     Py_RETURN_NONE;
 }
 
+static PyObject*
+Cube_search_depth(_cubetree_CubeObject* self, PyObject* args)
+{
+    int depth;
+    if (!PyArg_ParseTuple(args, "i", &depth))
+        return NULL;
+    movenode_t* solution_node = searchDepth(&self->cube_state, depth);
+    if (solution_node == NULL)
+        Py_RETURN_NONE;
+    PyObject* solution_list = PyList_New(0);
+    while (solution_node != NULL) {
+        PyObject* move = PyTuple_New(2);
+
+        PyObject* tmp = Py_BuildValue("i", solution_node->face);
+        PyTuple_SetItem(move, 0, tmp);
+
+        tmp = Py_BuildValue("i", solution_node->turn_type);
+        PyTuple_SetItem(move, 1, tmp);
+
+        PyList_Append(solution_list, move);
+        Py_DECREF(move);
+
+        solution_node = solution_node->next_node;
+    }
+    return solution_list;
+}
+
+
 static PyMethodDef Cube_methods[] = {
     {"get_state", (PyCFunction) Cube_get_state, METH_NOARGS,
      "Returns a tuple of numbers representing the cube's state."},
@@ -129,7 +157,9 @@ static PyMethodDef Cube_methods[] = {
     {"shuffle", (PyCFunction) Cube_shuffle, METH_VARARGS,
      "Shuffles the cube by turning a random face a number of times."},
     {"get_facelet", (PyCFunction) Cube_get_facelet, METH_VARARGS,
-    "Gets the facelet color from a facelet id on the cube."},
+     "Gets the facelet color from a facelet id on the cube."},
+    {"search_depth", (PyCFunction) Cube_search_depth, METH_VARARGS,
+     "Searches the cube for a solution at a given turn depth."},
     {NULL} /* Sentinel */
 };
 

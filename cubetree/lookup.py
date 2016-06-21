@@ -47,7 +47,7 @@ def save_lower_edge_lookup():
     if not _cubetree.save_lower_edge_lookup():
         raise LookupSaveFailedException
 
-def gen_lookups():
+def load_or_gen_lookups():
 
     try:
         load_corner_lookup()
@@ -72,7 +72,4 @@ def gen_lookups():
         print("generating lower edge lookup...")
         gen_lower_edge_lookup()
         save_lower_edge_lookup()
-
-def set_lookup_cancel_checker(cancel_checker):
-    _cubetree.set_lookup_cancel_checker(cancel_checker)
 

@@ -11,11 +11,21 @@ class TurnType(enum.Enum):
     NO_TURN, CLOCKWISE, DOUBLE, COUNTER = range(4)
 
 
+class Move:
+
+    def __init__(self, face, turn_type):
+        self.face = face
+        self.turn_type = turn_type
+
+    def __str__(self):
+        return self.face.name + " " + self.turn_type.name
+
+
 class Cube:
 
     def __init__(self, state=None):
         
-        if state == None:
+        if state is None:
             self.raw_cube = _cubetree.Cube()
         else:
             self.raw_cube = _cubetree.Cube(state)
@@ -51,5 +61,23 @@ class Cube:
 
     def shuffle(self, i):
         self.raw_cube.shuffle(i)
+
+    def search_depth(self, depth):
+        raw_solution = self.raw_cube.search_depth(depth)
+        if raw_solution is None:
+            return None
+        else:
+            return [Move(Face(face_index), TurnType(turn_type_index)) for face_index, turn_type_index in raw_solution]
+
+    def solve(self):
+        if self.is_solved():
+            return []
+        cur_depth = 0
+        while True:
+            cur_depth += 1
+            print("DEPTH {}".format(cur_depth))
+            possible_solution = self.search_depth(cur_depth)
+            if possible_solution != None:
+                return possible_solution
 
 
