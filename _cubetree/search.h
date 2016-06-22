@@ -13,7 +13,7 @@ typedef struct movenode_t {
 } movenode_t;
 
 /* search the cube for a solution at the given depth */
-movenode_t* searchDepth(const cube_t* last_cube, int depth);
+bool searchDepth(const cube_t* last_cube, int depth, movenode_t** solution);
 
 #endif
 

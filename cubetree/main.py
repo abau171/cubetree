@@ -24,5 +24,6 @@ def main():
         elif opt in ("-s", "--server"):
             start_server(48484)
         elif opt in ("-w", "--worker"):
+            load_or_gen_lookups()
             start_worker(socket.gethostname(), 48484)
 

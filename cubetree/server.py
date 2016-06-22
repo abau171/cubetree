@@ -2,7 +2,7 @@ import threading
 import socket
 import json
 
-from .cube import Cube
+from .cube import Cube, decode_move_list
 
 class WorkerThread(threading.Thread):
     def __init__(self, socket):
@@ -11,11 +11,22 @@ class WorkerThread(threading.Thread):
         self.read_file = socket.makefile("r")
         self.write_file = socket.makefile("w")
     def job_loop(self):
-        cube = Cube()
-        cube.shuffle(2)
-        message = json.dumps(cube.get_state())
-        self.write_file.write(message + "\n")
-        self.write_file.flush()
+        while True:
+            cube = Cube()
+            cube.shuffle(15)
+            print(cube)
+            cur_depth = 0
+            solution = None
+            while solution is None:
+                cur_depth += 1
+                message = json.dumps([cube.get_state(), cur_depth])
+                self.write_file.write(message + "\n")
+                self.write_file.flush()
+                result_message = self.read_file.readline().rstrip("\n")
+                possible_solution = json.loads(result_message)
+                if possible_solution is not None:
+                    solution = decode_move_list(possible_solution)
+            print("SOLUTION:", solution)
     def run(self):
         print("new worker connected")
         self.job_loop()

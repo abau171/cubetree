@@ -74,13 +74,24 @@ static movenode_t* searchDepth_rec(const cube_t* last_cube, int depth, uint8_t l
     return NULL;
 }
 
-movenode_t* searchDepth(const cube_t* last_cube, int depth) {
-    // if depth is 0, return immediately (result is NULL whether it is solved or not)
+bool searchDepth(const cube_t* last_cube, int depth, movenode_t** solution) {
+    // if depth is 0, return empty solution if solved
     if (depth == 0) {
-        return NULL;
+        if (isSolvedCube(last_cube)) {
+            *solution = NULL;
+            return true;
+        } else {
+            return false;
+        }
     // otherwise, perform an actual recursive search
     } else {
-        return searchDepth_rec(last_cube, depth, 6);
+        movenode_t* possible_solution = searchDepth_rec(last_cube, depth, 6);
+        if (possible_solution == NULL) {
+            return false;
+        } else {
+            *solution = possible_solution;
+            return true;
+        }
     }
 }
 

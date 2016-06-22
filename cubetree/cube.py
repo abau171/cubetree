@@ -17,8 +17,16 @@ class Move:
         self.face = face
         self.turn_type = turn_type
 
-    def __str__(self):
-        return self.face.name + " " + self.turn_type.name
+    def __repr__(self):
+        return "Move({}, {})".format(str(self.face), str(self.turn_type))
+
+
+def encode_move_list(l):
+    return [[move.face.value, move.turn_type.value] for move in l]
+
+
+def decode_move_list(l):
+    return [Move(Face(move[0]), TurnType(move[1])) for move in l]
 
 
 class Cube:
