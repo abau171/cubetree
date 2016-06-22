@@ -20,7 +20,7 @@ static PyObject*
 Cube_init(_cubetree_CubeObject* self, PyObject* args)
 {
     PyObject* cube_data = NULL;
-    if (!PyArg_ParseTuple(args, "|O!", &PyTuple_Type, &cube_data))
+    if (!PyArg_ParseTuple(args, "|O!", &PyList_Type, &cube_data))
         return NULL;
 
     if (cube_data == NULL) {
@@ -30,7 +30,7 @@ Cube_init(_cubetree_CubeObject* self, PyObject* args)
 
     long raw_cube_data[40];
     for (Py_ssize_t i = 0; i < 40; i++) {
-        PyObject* item = PyTuple_GetItem(cube_data, i);
+        PyObject* item = PyList_GetItem(cube_data, i);
         if (item == NULL)
             return NULL;
         long raw_data = PyLong_AsLong(item);
@@ -63,7 +63,7 @@ Cube_get_state(_cubetree_CubeObject* self)
         raw_cube_data[17 + 2 * i] = self->cube_state.edgesystem.edges[i].flip;
     }
 
-    PyObject* cube_data = PyTuple_New(40);
+    PyObject* cube_data = PyList_New(40);
     if (cube_data == NULL)
         return NULL;
     for (Py_ssize_t i = 0; i < 40; i++) {
@@ -72,7 +72,7 @@ Cube_get_state(_cubetree_CubeObject* self)
             Py_DECREF(cube_data);
             return NULL;
         }
-        PyTuple_SET_ITEM(cube_data, i, item);
+        PyList_SET_ITEM(cube_data, i, item);
     }
     return cube_data;
 }
