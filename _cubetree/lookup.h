@@ -12,7 +12,6 @@ int encodeUpperEdgeSystem(const edgesystem_t* cs);
 int encodeLowerEdgeSystem(const edgesystem_t* cs);
 
 /* generator functions */
-void set_lookup_cancel_checker(bool (*checker)(int, int));
 void genCornerLookup(void);
 void genUpperEdgeLookup(void);
 void genLowerEdgeLookup(void);

@@ -33,8 +33,9 @@ class WorkerConnectionThread(threading.Thread):
 
 class WorkerListenerThread(threading.Thread):
 
-    def __init__(self, port, job_manager):
+    def __init__(self, hostname, port, job_manager):
         super().__init__(daemon=True)
+        self.hostname = hostname
         self.port = port
         self.job_manager = job_manager
 
@@ -42,7 +43,7 @@ class WorkerListenerThread(threading.Thread):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
             print("new server")
             server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            server_socket.bind((socket.gethostname(), self.port))
+            server_socket.bind((self.hostname, self.port))
             server_socket.listen(5)
             while True:
                 client_socket, address = server_socket.accept()
@@ -107,7 +108,7 @@ class JobManager:
             return job
 
 def gen_jobs(cube, depth):
-    if depth > 13:
+    if depth > 14:
         for face_id in range(6):
             for turn_type_id in range(1, 4):
                 clone_cube = Cube(cube.get_state())
@@ -118,9 +119,9 @@ def gen_jobs(cube, depth):
 
 class DistributedSolver:
 
-    def __init__(self, port):
+    def __init__(self, hostname, port):
         self.job_manager = JobManager()
-        WorkerListenerThread(port, self.job_manager).start()
+        WorkerListenerThread(hostname, port, self.job_manager).start()
 
     def solve(self, cube):
         if cube.is_solved():

@@ -162,12 +162,6 @@ int encodeLowerEdgeSystem(const edgesystem_t* es) {
 
 /* generator functions */
 
-static bool (*cancel_checker)(int, int);
-
-void set_lookup_cancel_checker(bool (*checker)(int, int)) {
-    cancel_checker = checker;
-}
-
 void genCornerLookup() {
     for (int i = 0; i < CORNER_LOOKUP_SIZE; i++) {
         corner_lookup[i] = 255;
@@ -181,9 +175,6 @@ void genCornerLookup() {
     int count = 0;
     while (queue != NULL) {
         count += 1;
-        if (count % 1000000 == 0) {
-            cancel_checker(count, CORNER_LOOKUP_SIZE);
-        }
         for (uint8_t face = 0; face < 6; face++) {
             for (int turn_type = 1; turn_type < 4; turn_type++) {
                 cornersystem_t new_cs;
@@ -219,9 +210,6 @@ void genUpperEdgeLookup() {
     int count = 0;
     while (queue != NULL) {
         count += 1;
-        if (count % 1000000 == 0) {
-            cancel_checker(count, CORNER_LOOKUP_SIZE);
-        }
         for (uint8_t face = 0; face < 6; face++) {
             for (int turn_type = 1; turn_type < 4; turn_type++) {
                 edgesystem_t new_es;
@@ -257,9 +245,6 @@ void genLowerEdgeLookup() {
     int count = 0;
     while (queue != NULL) {
         count += 1;
-        if (count % 1000000 == 0) {
-            cancel_checker(count, CORNER_LOOKUP_SIZE);
-        }
         for (uint8_t face = 0; face < 6; face++) {
             for (int turn_type = 1; turn_type < 4; turn_type++) {
                 edgesystem_t new_es;

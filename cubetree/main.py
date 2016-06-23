@@ -20,7 +20,7 @@ def main():
     test_solve = False
     serve = False
     start_workers = -1
-    hostname = socket.gethostname()
+    hostname = ""
     port = 48484
 
     for opt, arg in opts:
@@ -38,7 +38,7 @@ def main():
             port = int(arg)
 
     if gen:
-        gen_lookups()
+        load_or_gen_lookups()
     elif test_solve:
         load_or_gen_lookups()
         c = Cube()
@@ -46,7 +46,7 @@ def main():
         c.solve()
     else:
         if serve:
-            solver = DistributedSolver(port)
+            solver = DistributedSolver(hostname, port)
         if start_workers >= 0:
             load_or_gen_lookups()
             if start_workers == 0:
