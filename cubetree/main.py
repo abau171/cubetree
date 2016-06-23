@@ -1,6 +1,7 @@
 import sys
 import getopt
 import socket
+import multiprocessing
 
 from .cube import Cube
 from .lookup import load_or_gen_lookups, load_corner_lookup, load_lower_edge_lookup, load_upper_edge_lookup
@@ -9,11 +10,11 @@ from .worker import start_worker
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "gtsw")
+        opts, args = getopt.getopt(sys.argv[1:], "gtsw:", ["server", "workers="])
     except getopt.GetoptError as err:
-        print("usage: python3 run.py [-g] [-t]")
+        print("usage: python3 run.py [-g] [-t] [-s|--server] [-w|--workers=<num_workers>]")
         return
-    for (opt, arg) in opts:
+    for opt, arg in opts:
         if opt in ("-g", "--gen-lookups"):
             gen_lookups()
         elif opt in ("-t", "--test-solve"):
@@ -23,7 +24,11 @@ def main():
             c.solve()
         elif opt in ("-s", "--server"):
             start_server(48484)
-        elif opt in ("-w", "--worker"):
+        elif opt in ("-w", "--workers"):
             load_or_gen_lookups()
-            start_worker(socket.gethostname(), 48484)
+            num_workers = int(arg)
+            if num_workers == 0:
+                num_workers = multiprocessing.cpu_count()
+            for i in range(num_workers):
+                start_worker(socket.gethostname(), 48484)
 
