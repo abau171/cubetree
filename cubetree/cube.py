@@ -21,6 +21,10 @@ class Move:
         return "Move({}, {})".format(str(self.face), str(self.turn_type))
 
 
+def format_move_list(l):
+    return " ".join(["U", "L", "F", "R", "B", "D"][move.face.value] + ["?", "", "2", "'"][move.turn_type.value] for move in l)
+
+
 def encode_move_list(l):
     return [[move.face.value, move.turn_type.value] for move in l]
 

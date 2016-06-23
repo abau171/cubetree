@@ -116,22 +116,21 @@ def gen_jobs(cube, depth):
     else:
         yield cube, depth
 
-def start_server(port):
-    job_manager = JobManager()
-    WorkerListenerThread(port, job_manager).start()
-    for i in range(5): # solve 5 random cubes
-        cube = Cube()
-        while cube.is_solved():
-            cube.shuffle(14)
-        print("SOLVING CUBE {}:".format(i + 1))
-        print(cube)
+class DistributedSolver:
+
+    def __init__(self, port):
+        self.job_manager = JobManager()
+        WorkerListenerThread(port, self.job_manager).start()
+
+    def solve(self, cube):
+        if cube.is_solved():
+            return []
         for cur_depth in range(1, 21):
             print("DEPTH", cur_depth)
-            job_manager.set_solution(None)
-            job_manager.set_job_source(gen_jobs(cube, cur_depth))
-            job_manager.join()
-            solution = job_manager.get_solution()
+            self.job_manager.set_solution(None)
+            self.job_manager.set_job_source(gen_jobs(cube, cur_depth))
+            self.job_manager.join()
+            solution = self.job_manager.get_solution()
             if solution is not None:
-                print("SOLUTION:", solution)
-                break
+                return solution
 
