@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 
 #include <cube.h>
 
@@ -260,7 +259,6 @@ bool isSolvedEdgeSystem(const edgesystem_t* es) {
 }
 
 void shuffleCube(cube_t* cube, int iterations) {
-    srand(time(NULL));
     // don't turn the same face twice in a row for a better shuffle
     uint8_t last_face = 6;
     for (int i = 0; i < iterations; i++) {

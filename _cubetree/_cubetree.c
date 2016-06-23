@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <stdbool.h>
+#include <time.h>
 
 #include <cube.h>
 #include <lookup.h>
@@ -106,6 +107,8 @@ static PyModuleDef _cubetreemodule = {
 PyMODINIT_FUNC
 PyInit__cubetree(void)
 {
+    //srand(time(NULL));
+    srand(0);
     PyObject* m;
     if (PyType_Ready(&_cubetree_CubeType) < 0)
         return NULL;

@@ -19,6 +19,7 @@ class WorkerThread(threading.Thread):
         while True:
             job = self.connection.read()
             cube, depth = _decode_job(job)
+            print("DEPTH", depth)
             solution = cube.search_depth(depth)
             result = encode_move_list(solution) if solution is not None else None
             self.connection.write(result)
