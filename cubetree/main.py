@@ -11,7 +11,7 @@ from .worker import start_worker
 def main():
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "gtsw:", ["server", "workers="])
+        opts, args = getopt.getopt(sys.argv[1:], "gtsw:h:p:", ["server", "workers=", "hostname=", "port="])
     except getopt.GetoptError as err:
         print("usage: python3 run.py [-g] [-t] [-s|--server] [-w|--workers=<num_workers>]")
         return
@@ -20,6 +20,8 @@ def main():
     test_solve = False
     serve = False
     start_workers = -1
+    hostname = socket.gethostname()
+    port = 48484
 
     for opt, arg in opts:
         if opt in ("-g", "--gen-lookups"):
@@ -30,6 +32,10 @@ def main():
             serve = True
         elif opt in ("-w", "--workers"):
             start_workers = int(arg)
+        elif opt in ("-h", "--host"):
+            hostname = arg
+        elif opt in ("-p", "--port"):
+            port = int(arg)
 
     if gen:
         gen_lookups()
@@ -40,14 +46,13 @@ def main():
         c.solve()
     else:
         if serve:
-            solver = DistributedSolver(48484)
+            solver = DistributedSolver(port)
         if start_workers >= 0:
             load_or_gen_lookups()
-            num_workers = int(arg)
-            if num_workers == 0:
-                num_workers = multiprocessing.cpu_count()
-            for i in range(num_workers):
-                start_worker(socket.gethostname(), 48484)
+            if start_workers == 0:
+                start_workers = multiprocessing.cpu_count()
+            for i in range(start_workers):
+                start_worker(hostname, port)
         if serve:
             while True:
                 shuffle_depth = int(input("shuffle: "))
