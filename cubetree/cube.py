@@ -2,6 +2,8 @@ import enum
 
 import _cubetree
 
+from .json_socket_proxy import JSONSerializable
+
 
 class Face(enum.Enum):
     UP, LEFT, FRONT, RIGHT, BACK, DOWN = range(6)
@@ -11,26 +13,25 @@ class TurnType(enum.Enum):
     NO_TURN, CLOCKWISE, DOUBLE, COUNTER = range(4)
 
 
-class Move:
+class Algorithm(JSONSerializable):
 
-    def __init__(self, face, turn_type):
-        self.face = face
-        self.turn_type = turn_type
+    def __init__(self, move_list):
+        if move_list is not None:
+            self.move_list = list(move_list)
 
-    def __repr__(self):
-        return "Move({}, {})".format(str(self.face), str(self.turn_type))
+    def __str__(self):
+        return " ".join(["U", "L", "F", "R", "B", "D"][face.value] + ["?", "", "2", "'"][turn_type.value] for face, turn_type in self.move_list)
 
+    def __iter__(self):
+        return iter(self.move_list)
 
-def format_move_list(l):
-    return " ".join(["U", "L", "F", "R", "B", "D"][move.face.value] + ["?", "", "2", "'"][move.turn_type.value] for move in l)
+    @classmethod
+    def json_serialize(cls, obj):
+        return [[face.value, turn_type.value] for face, turn_type in obj]
 
-
-def encode_move_list(l):
-    return [[move.face.value, move.turn_type.value] for move in l]
-
-
-def decode_move_list(l):
-    return [Move(Face(move[0]), TurnType(move[1])) for move in l]
+    @classmethod
+    def json_deserialize(cls, obj):
+        return Algorithm((Face(move[0]), TurnType(move[1])) for move in obj)
 
 
 class Cube:
@@ -79,7 +80,7 @@ class Cube:
         if raw_solution is None:
             return None
         else:
-            return [Move(Face(face_index), TurnType(turn_type_index)) for face_index, turn_type_index in raw_solution]
+            return Algorithm((Face(face_index), TurnType(turn_type_index)) for face_index, turn_type_index in raw_solution)
 
     def solve(self):
         if self.is_solved():

@@ -3,7 +3,7 @@ import getopt
 import socket
 import multiprocessing
 
-from .cube import Cube, format_move_list
+from .cube import Cube
 from .lookup import load_or_gen_lookups, load_corner_lookup, load_lower_edge_lookup, load_upper_edge_lookup
 from .server import DistributedSolver
 from .worker import start_worker
@@ -58,5 +58,5 @@ def main():
                 shuffle_depth = int(input("shuffle: "))
                 c = Cube()
                 c.shuffle(shuffle_depth)
-                print(format_move_list(solver.solve(c)))
+                print(solver.solve(c))
 

@@ -2,7 +2,7 @@ import threading
 import socket
 import json
 
-from .cube import Cube, Face, TurnType, decode_move_list
+from .cube import Cube, Face, TurnType
 from .json_socket_proxy import JSONSocketProxy
 
 def _encode_job(job):
@@ -19,9 +19,8 @@ class WorkerConnectionThread(threading.Thread):
         while True:
             job = self.job_manager.get()
             self.connection.write(_encode_job(job))
-            possible_solution = self.connection.read()
-            if possible_solution is not None:
-                solution = decode_move_list(possible_solution)
+            solution = self.connection.read()
+            if solution is not None:
                 self.job_manager.set_solution(solution)
             self.job_manager.job_done()
 

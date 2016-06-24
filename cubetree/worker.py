@@ -2,7 +2,7 @@ import socket
 import multiprocessing
 import json
 
-from .cube import Cube, encode_move_list
+from .cube import Cube
 from .json_socket_proxy import JSONSocketProxy
 
 def _decode_job(job):
@@ -21,8 +21,7 @@ class WorkerProcess(multiprocessing.Process):
             cube, depth = _decode_job(job)
             print("DEPTH", depth)
             solution = cube.search_depth(depth)
-            result = encode_move_list(solution) if solution is not None else None
-            self.connection.write(result)
+            self.connection.write(solution)
 
     def run(self):
         worker_socket = socket.socket()
