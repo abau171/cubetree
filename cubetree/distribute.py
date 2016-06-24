@@ -1,12 +1,25 @@
 import threading
+import multiprocessing
 import socket
 import json
 
 from .cube import Cube, Face, TurnType
-from .json_socket_proxy import JSONSocketProxy
+from .json_socket_proxy import JSONSocketProxy, JSONSerializable
 
-def _encode_job(job):
-    return [job[0].get_state(), job[1]]
+class Job(JSONSerializable):
+
+    def __init__(self, cube, depth):
+        self.cube = cube
+        self.depth = depth
+
+    @classmethod
+    def json_serialize(cls, obj):
+        return [obj.cube.get_state(), obj.depth]
+
+    @classmethod
+    def json_deserialize(cls, obj):
+        return Job(Cube(obj[0]), obj[1])
+
 
 class WorkerConnectionThread(threading.Thread):
 
@@ -18,7 +31,7 @@ class WorkerConnectionThread(threading.Thread):
     def job_loop(self):
         while True:
             job = self.job_manager.get()
-            self.connection.write(_encode_job(job))
+            self.connection.write(job)
             solution = self.connection.read()
             if solution is not None:
                 self.job_manager.set_solution(solution)
@@ -114,7 +127,7 @@ def gen_jobs(cube, depth):
                 clone_cube.turn(Face(face_id), TurnType(turn_type_id))
                 yield from gen_jobs(clone_cube, depth - 1)
     else:
-        yield cube, depth
+        yield Job(cube, depth)
 
 class DistributedSolver:
 
@@ -133,4 +146,28 @@ class DistributedSolver:
             solution = self.job_manager.get_solution()
             if solution is not None:
                 return solution
+
+class WorkerProcess(multiprocessing.Process):
+
+    def __init__(self, hostname, port):
+        super().__init__()
+        self.hostname = hostname
+        self.port = port
+
+    def job_loop(self):
+        while True:
+            job = self.connection.read()
+            print("DEPTH", job.depth)
+            solution = job.cube.search_depth(job.depth)
+            self.connection.write(solution)
+
+    def run(self):
+        worker_socket = socket.socket()
+        worker_socket.connect((self.hostname, self.port))
+        self.connection = JSONSocketProxy(worker_socket)
+        self.job_loop()
+        self.connection.close()
+
+def start_worker(hostname, port):
+    WorkerProcess(hostname, port).start()
 

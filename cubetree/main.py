@@ -5,8 +5,7 @@ import multiprocessing
 
 from .cube import Cube
 from .lookup import load_or_gen_lookups, load_corner_lookup, load_lower_edge_lookup, load_upper_edge_lookup
-from .server import DistributedSolver
-from .worker import start_worker
+from .distribute import DistributedSolver, start_worker
 
 def main():
 
