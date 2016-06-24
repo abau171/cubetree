@@ -3,9 +3,10 @@ import getopt
 import socket
 import multiprocessing
 
-from .cube import Cube
-from .lookup import load_or_gen_lookups, load_corner_lookup, load_lower_edge_lookup, load_upper_edge_lookup
-from .distribute import DistributedSolver, start_worker
+import cubetree.cube
+import cubetree.lookup
+import cubetree.distribute
+
 
 def main():
 
@@ -37,25 +38,25 @@ def main():
             port = int(arg)
 
     if gen:
-        load_or_gen_lookups()
+        cubetree.lookup.load_or_gen_lookups()
     elif test_solve:
-        load_or_gen_lookups()
-        c = Cube()
+        cubetree.lookup.load_or_gen_lookups()
+        c = cubetree.cube.Cube()
         c.shuffle(14)
         c.solve()
     else:
         if serve:
-            solver = DistributedSolver(hostname, port)
+            solver = cubetree.distribute.DistributedSolver(hostname, port)
         if start_workers >= 0:
-            load_or_gen_lookups()
+            cubetree.lookup.load_or_gen_lookups()
             if start_workers == 0:
                 start_workers = multiprocessing.cpu_count()
             for i in range(start_workers):
-                start_worker(hostname, port)
+                cubetree.distribute.start_worker(hostname, port)
         if serve:
             while True:
                 shuffle_depth = int(input("shuffle: "))
-                c = Cube()
+                c = cubetree.cube.Cube()
                 c.shuffle(shuffle_depth)
                 print(solver.solve(c))
 

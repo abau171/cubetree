@@ -3,10 +3,11 @@ import multiprocessing
 import socket
 import json
 
-from .cube import Cube, Face, TurnType
-from .json_socket_proxy import JSONSocketProxy, JSONSerializable
+import cubetree.cube
+import cubetree.json_socket_proxy
 
-class Job(JSONSerializable):
+
+class Job(cubetree.json_socket_proxy.JSONSerializable):
 
     def __init__(self, cube, depth):
         self.cube = cube
@@ -18,7 +19,7 @@ class Job(JSONSerializable):
 
     @classmethod
     def json_deserialize(cls, obj):
-        return Job(Cube(obj[0]), obj[1])
+        return Job(cubetree.cube.Cube(obj[0]), obj[1])
 
 
 class WorkerConnectionThread(threading.Thread):
@@ -43,6 +44,7 @@ class WorkerConnectionThread(threading.Thread):
         self.connection.close()
         print("worker connection closed")
 
+
 class WorkerListenerThread(threading.Thread):
 
     def __init__(self, hostname, port, job_manager):
@@ -59,9 +61,10 @@ class WorkerListenerThread(threading.Thread):
             server_socket.listen(5)
             while True:
                 client_socket, address = server_socket.accept()
-                worker_connection = WorkerConnectionThread(JSONSocketProxy(client_socket), self.job_manager)
+                worker_connection = WorkerConnectionThread(cubetree.json_socket_proxy.JSONSocketProxy(client_socket), self.job_manager)
                 worker_connection.start()
         print("server closed")
+
 
 class JobManager:
 
@@ -119,15 +122,17 @@ class JobManager:
             self._try_get_next()
             return job
 
+
 def gen_jobs(cube, depth):
     if depth > 14:
         for face_id in range(6):
             for turn_type_id in range(1, 4):
-                clone_cube = Cube(cube.get_state())
-                clone_cube.turn(Face(face_id), TurnType(turn_type_id))
+                clone_cube = cubetree.cube.Cube(cube.get_state())
+                clone_cube.turn(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))
                 yield from gen_jobs(clone_cube, depth - 1)
     else:
         yield Job(cube, depth)
+
 
 class DistributedSolver:
 
@@ -137,7 +142,7 @@ class DistributedSolver:
 
     def solve(self, cube):
         if cube.is_solved():
-            return []
+            return cubetree.cube.Algorithm()
         for cur_depth in range(1, 21):
             print("DEPTH", cur_depth)
             self.job_manager.set_solution(None)
@@ -146,6 +151,7 @@ class DistributedSolver:
             solution = self.job_manager.get_solution()
             if solution is not None:
                 return solution
+
 
 class WorkerProcess(multiprocessing.Process):
 
@@ -164,7 +170,7 @@ class WorkerProcess(multiprocessing.Process):
     def run(self):
         worker_socket = socket.socket()
         worker_socket.connect((self.hostname, self.port))
-        self.connection = JSONSocketProxy(worker_socket)
+        self.connection = cubetree.json_socket_proxy.JSONSocketProxy(worker_socket)
         self.job_loop()
         self.connection.close()
 

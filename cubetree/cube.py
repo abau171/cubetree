@@ -2,7 +2,7 @@ import enum
 
 import _cubetree
 
-from .json_socket_proxy import JSONSerializable
+import cubetree.json_socket_proxy
 
 
 class Face(enum.Enum):
@@ -13,11 +13,13 @@ class TurnType(enum.Enum):
     NO_TURN, CLOCKWISE, DOUBLE, COUNTER = range(4)
 
 
-class Algorithm(JSONSerializable):
+class Algorithm(cubetree.json_socket_proxy.JSONSerializable):
 
-    def __init__(self, move_list):
+    def __init__(self, move_list=None):
         if move_list is not None:
             self.move_list = list(move_list)
+        else:
+            self.move_list = []
 
     def __str__(self):
         return " ".join(["U", "L", "F", "R", "B", "D"][face.value] + ["?", "", "2", "'"][turn_type.value] for face, turn_type in self.move_list)
