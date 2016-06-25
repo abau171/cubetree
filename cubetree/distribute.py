@@ -1,7 +1,9 @@
+import collections
 import threading
 import multiprocessing
 import socket
 import json
+import sys
 
 import cubetree.cube
 import cubetree.json_socket_proxy
@@ -33,16 +35,18 @@ class WorkerConnectionThread(threading.Thread):
         while True:
             job = self.job_manager.get()
             self.connection.write(job)
-            solution = self.connection.read()
+            try:
+                solution = self.connection.read()
+            except cubetree.json_socket_proxy.EndOfStream:
+                self.job_manager.return_job(job)
+                return
             if solution is not None:
                 self.job_manager.set_solution(solution)
             self.job_manager.job_done()
 
     def run(self):
-        print("new worker connected")
         self.job_loop()
         self.connection.close()
-        print("worker connection closed")
 
 
 class WorkerListenerThread(threading.Thread):
@@ -55,7 +59,6 @@ class WorkerListenerThread(threading.Thread):
 
     def run(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-            print("new server")
             server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             server_socket.bind((self.hostname, self.port))
             server_socket.listen(5)
@@ -63,13 +66,13 @@ class WorkerListenerThread(threading.Thread):
                 client_socket, address = server_socket.accept()
                 worker_connection = WorkerConnectionThread(cubetree.json_socket_proxy.JSONSocketProxy(client_socket), self.job_manager)
                 worker_connection.start()
-        print("server closed")
 
 
 class JobManager:
 
     def __init__(self):
         self.job_iterator = None
+        self.returned_jobs = collections.deque()
         self.next_job = None
         self.solution = None
 
@@ -80,7 +83,11 @@ class JobManager:
 
     def _try_get_next(self):
         # must have self.not_empty
+        if len(self.returned_jobs) > 0:
+            self.next_job = self.returned_jobs.popleft()
+            return
         if self.job_iterator is None:
+            self.next_job = None
             return
         try:
             self.next_job = next(self.job_iterator)
@@ -97,6 +104,15 @@ class JobManager:
             else:
                 raise ValueError("job_done() called too many times")
 
+    def return_job(self, job):
+        with self.not_empty:
+            if self.next_job is None:
+                self.next_job = job
+                self.not_empty.notify()
+            else:
+                self.returned_jobs.append(job)
+            self.unfinished_jobs -= 1
+
     def set_solution(self, solution):
         self.solution = solution
 
@@ -105,7 +121,7 @@ class JobManager:
 
     def join(self):
         with self.all_jobs_done:
-            while self.next_job is not None or self.unfinished_jobs > 0:
+            while self.next_job is not None or len(self.returned_jobs) > 0 or self.unfinished_jobs > 0:
                 self.all_jobs_done.wait()
 
     def set_job_source(self, job_source):
@@ -164,8 +180,9 @@ class WorkerProcess(multiprocessing.Process):
         try:
             while True:
                 job = self.connection.read()
-                print("DEPTH", job.depth)
                 solution = job.cube.search_depth(job.depth)
+                print("X" if solution is not None else ".", end="")
+                sys.stdout.flush()
                 self.connection.write(solution)
         except cubetree.json_socket_proxy.EndOfStream:
             pass

@@ -37,7 +37,10 @@ class JSONSocketProxy:
         self.write_file = socket.makefile("w")
 
     def _read_obj_string(self):
-        message = self.read_file.readline()
+        try:
+            message = self.read_file.readline()
+        except ConnectionResetError:
+            return None
         if len(message) == 0:
             return None
         if message[-1] != "\n":
