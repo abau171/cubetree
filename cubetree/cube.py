@@ -27,6 +27,9 @@ class Algorithm(cubetree.json_socket_proxy.JSONSerializable):
     def __iter__(self):
         return iter(self.move_list)
 
+    def __add__(self, other):
+        return Algorithm(self.move_list + other.move_list)
+
     @classmethod
     def json_serialize(cls, obj):
         return [[face.value, turn_type.value] for face, turn_type in obj]

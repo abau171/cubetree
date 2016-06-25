@@ -11,17 +11,18 @@ import cubetree.json_socket_proxy
 
 class Job(cubetree.json_socket_proxy.JSONSerializable):
 
-    def __init__(self, cube, depth):
+    def __init__(self, cube, depth, partial_solution):
         self.cube = cube
         self.depth = depth
+        self.partial_solution = partial_solution
 
     @classmethod
     def json_serialize(cls, obj):
-        return [obj.cube.get_state(), obj.depth]
+        return [obj.cube.get_state(), obj.depth, [[face.value, turn_type.value] for face, turn_type in obj.partial_solution]]
 
     @classmethod
     def json_deserialize(cls, obj):
-        return Job(cubetree.cube.Cube(obj[0]), obj[1])
+        return Job(cubetree.cube.Cube(obj[0]), obj[1], cubetree.cube.Algorithm((cubetree.cube.Face(move[0]), cubetree.cube.TurnType(move[1])) for move in obj[2]))
 
 
 class WorkerConnectionThread(threading.Thread):
@@ -139,15 +140,15 @@ class JobManager:
             return job
 
 
-def gen_jobs(cube, depth):
+def gen_jobs(cube, depth, partial_solution=cubetree.cube.Algorithm()):
     if depth > 14:
         for face_id in range(6):
             for turn_type_id in range(1, 4):
                 clone_cube = cubetree.cube.Cube(cube.get_state())
                 clone_cube.turn(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))
-                yield from gen_jobs(clone_cube, depth - 1)
+                yield from gen_jobs(clone_cube, depth - 1, partial_solution + cubetree.cube.Algorithm([(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))]))
     else:
-        yield Job(cube, depth)
+        yield Job(cube, depth, partial_solution)
 
 
 class DistributedSolver:
@@ -181,9 +182,14 @@ class WorkerProcess(multiprocessing.Process):
             while True:
                 job = self.connection.read()
                 solution = job.cube.search_depth(job.depth)
-                print("X" if solution is not None else ".", end="")
-                sys.stdout.flush()
-                self.connection.write(solution)
+                if solution is not None:
+                    print("X", end="")
+                    sys.stdout.flush()
+                    self.connection.write(job.partial_solution + solution)
+                else:
+                    print(".", end="")
+                    sys.stdout.flush()
+                    self.connection.write(None)
         except cubetree.json_socket_proxy.EndOfStream:
             pass
 
