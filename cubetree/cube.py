@@ -9,6 +9,9 @@ import cubetree.json_socket_proxy
 class Face(enum.Enum):
     UP, LEFT, FRONT, RIGHT, BACK, DOWN = range(6)
 
+    def opposite(self):
+        return [Face.DOWN, Face.RIGHT, Face.BACK, Face.LEFT, Face.FRONT, Face.UP][self.value]
+
 
 class TurnType(enum.Enum):
     NO_TURN, CLOCKWISE, DOUBLE, COUNTER = range(4)

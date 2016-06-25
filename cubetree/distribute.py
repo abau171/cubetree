@@ -143,9 +143,15 @@ class JobManager:
 def gen_jobs(cube, depth, partial_solution=cubetree.cube.Algorithm()):
     if depth > 14:
         for face_id in range(6):
+            face = cubetree.cube.Face(face_id)
+            last_face = None if len(partial_solution.move_list) == 0 else partial_solution.move_list[-1][0]
+            if last_face is not None:
+                if face is last_face or (face.value < 3 and face is last_face.opposite()):
+                    continue
             for turn_type_id in range(1, 4):
+                turn_type = cubetree.cube.TurnType(turn_type_id)
                 clone_cube = cubetree.cube.Cube(cube.get_state())
-                clone_cube.turn(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))
+                clone_cube.turn(face, turn_type)
                 yield from gen_jobs(clone_cube, depth - 1, partial_solution + cubetree.cube.Algorithm([(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))]))
     else:
         yield Job(cube, depth, partial_solution)
