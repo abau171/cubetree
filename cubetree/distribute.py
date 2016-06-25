@@ -107,15 +107,20 @@ class JobManager:
 
     def return_job(self, job):
         with self.not_empty:
-            if self.next_job is None:
-                self.next_job = job
-                self.not_empty.notify()
-            else:
-                self.returned_jobs.append(job)
+            if solution is None:
+                if self.next_job is None:
+                    self.next_job = job
+                    self.not_empty.notify()
+                else:
+                    self.returned_jobs.append(job)
             self.unfinished_jobs -= 1
 
     def set_solution(self, solution):
-        self.solution = solution
+        with self.mutex:
+            self.solution = solution
+            self.job_iterator = None
+            self.returned_jobs.clear()
+            self.next_job = None
 
     def get_solution(self):
         return self.solution
