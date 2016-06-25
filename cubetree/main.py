@@ -2,6 +2,7 @@ import sys
 import getopt
 import socket
 import multiprocessing
+import time
 
 import cubetree.cube
 import cubetree.lookup
@@ -60,7 +61,12 @@ def main():
                 shuffle_algorithm = c.shuffle(shuffle_depth)
                 print(shuffle_algorithm)
                 print(c)
+                start_time = time.time()
                 print("SOLUTION:", solver.solve(c))
+                time_elapsed = time.time() - start_time
+                seconds_elapsed = int(time_elapsed % 60)
+                minutes_elapsed = int(time_elapsed // 60)
+                print("{}m{}s".format(minutes_elapsed, seconds_elapsed))
                 if input("solve another? (y/n) ") != "y":
                     break
 
