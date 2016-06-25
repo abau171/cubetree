@@ -8,7 +8,7 @@
 #include <lookup.h>
 
 // mapping of each face to the face on the opposite side of the cube
-static uint8_t opposite_faces[7] = {D_FACE, R_FACE, B_FACE, L_FACE, F_FACE, U_FACE, 6};
+static uint8_t opposite_faces[7] = {D_FACE, R_FACE, B_FACE, L_FACE, F_FACE, U_FACE, NO_FACE};
 
 static bool prune_move(uint8_t face, uint8_t last_face) {
     // if the current face was also the last face, skip it
@@ -74,7 +74,7 @@ static movenode_t* searchDepth_rec(const cube_t* last_cube, int depth, uint8_t l
     return NULL;
 }
 
-bool searchDepth(const cube_t* last_cube, int depth, movenode_t** solution) {
+bool searchDepth(const cube_t* last_cube, int depth, movenode_t** solution, uint8_t last_face) {
     // if depth is 0, return empty solution if solved
     if (depth == 0) {
         if (isSolvedCube(last_cube)) {
@@ -85,7 +85,7 @@ bool searchDepth(const cube_t* last_cube, int depth, movenode_t** solution) {
         }
     // otherwise, perform an actual recursive search
     } else {
-        movenode_t* possible_solution = searchDepth_rec(last_cube, depth, 6);
+        movenode_t* possible_solution = searchDepth_rec(last_cube, depth, last_face);
         if (possible_solution == NULL) {
             return false;
         } else {

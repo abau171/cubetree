@@ -123,10 +123,11 @@ static PyObject*
 Cube_search_depth(_cubetree_CubeObject* self, PyObject* args)
 {
     int depth;
-    if (!PyArg_ParseTuple(args, "i", &depth))
+    uint8_t last_face;
+    if (!PyArg_ParseTuple(args, "ib", &depth, &last_face))
         return NULL;
     movenode_t* solution_node;
-    bool found_solution = searchDepth(&self->cube_state, depth, &solution_node);
+    bool found_solution = searchDepth(&self->cube_state, depth, &solution_node, last_face);
     if (found_solution) {
         PyObject* solution_list = PyList_New(0);
         while (solution_node != NULL) {

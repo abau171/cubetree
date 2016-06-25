@@ -187,7 +187,8 @@ class WorkerProcess(multiprocessing.Process):
         try:
             while True:
                 job = self.connection.read()
-                solution = job.cube.search_depth(job.depth)
+                last_face = None if len(job.partial_solution.move_list) == 0 else job.partial_solution.move_list[-1][0]
+                solution = job.cube.search_depth(job.depth, last_face)
                 if solution is not None:
                     print("X", end="")
                     sys.stdout.flush()

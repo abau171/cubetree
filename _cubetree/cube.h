@@ -12,6 +12,7 @@
 #define R_FACE 3
 #define B_FACE 4
 #define D_FACE 5
+#define NO_FACE 6
 
 #define CLOCKWISE_TURN 1
 #define DOUBLE_TURN 2

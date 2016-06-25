@@ -46,7 +46,6 @@ class Algorithm(cubetree.json_socket_proxy.JSONSerializable):
 class Cube:
 
     def __init__(self, state=None):
-        
         if state is None:
             self.raw_cube = _cubetree.Cube()
         else:
@@ -99,8 +98,9 @@ class Cube:
         self.apply_algorithm(shuffle_algorithm)
         return shuffle_algorithm
 
-    def search_depth(self, depth):
-        raw_solution = self.raw_cube.search_depth(depth)
+    def search_depth(self, depth, last_face=None):
+        last_face_id = 6 if last_face is None else last_face.value
+        raw_solution = self.raw_cube.search_depth(depth, last_face_id)
         if raw_solution is None:
             return None
         else:
