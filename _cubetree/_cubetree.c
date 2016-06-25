@@ -6,6 +6,7 @@
 #include <cube.h>
 #include <lookup.h>
 #include <search.h>
+#include <profile.h>
 #include <_cubetree_Cube.h>
 
 static PyObject*
@@ -83,6 +84,56 @@ _cubetree_save_lower_edge_lookup(PyObject* self)
         Py_RETURN_FALSE;
 }
 
+static PyObject*
+_cubetree_run_cube_turns(PyObject* self, PyObject* args)
+{
+    int num_turns;
+    if (!PyArg_ParseTuple(args, "i", &num_turns))
+        return NULL;
+    run_cube_turns(num_turns);
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+_cubetree_run_corner_encodes(PyObject* self, PyObject* args)
+{
+    int num_encodes;
+    if (!PyArg_ParseTuple(args, "i", &num_encodes))
+        return NULL;
+    run_cube_corner_encodes(num_encodes);
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+_cubetree_run_upper_edge_encodes(PyObject* self, PyObject* args)
+{
+    int num_encodes;
+    if (!PyArg_ParseTuple(args, "i", &num_encodes))
+        return NULL;
+    run_cube_upper_edge_encodes(num_encodes);
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+_cubetree_run_lower_edge_encodes(PyObject* self, PyObject* args)
+{
+    int num_encodes;
+    if (!PyArg_ParseTuple(args, "i", &num_encodes))
+        return NULL;
+    run_cube_lower_edge_encodes(num_encodes);
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+_cubetree_run_all_encodes(PyObject* self, PyObject* args)
+{
+    int num_encodes;
+    if (!PyArg_ParseTuple(args, "i", &num_encodes))
+        return NULL;
+    run_cube_all_encodes(num_encodes);
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef _cubetree_methods[] = {
     {"gen_corner_lookup", (PyCFunction) _cubetree_gen_corner_lookup, METH_NOARGS, "Generates the corner lookup table."},
     {"gen_upper_edge_lookup", (PyCFunction) _cubetree_gen_upper_edge_lookup, METH_NOARGS, "Generates the upper edge lookup table."},
@@ -93,6 +144,11 @@ static PyMethodDef _cubetree_methods[] = {
     {"save_corner_lookup", (PyCFunction) _cubetree_save_corner_lookup, METH_NOARGS, "Saves the corner lookup table to a file."},
     {"save_upper_edge_lookup", (PyCFunction) _cubetree_save_upper_edge_lookup, METH_NOARGS, "Saves the upper edge lookup table to a file"},
     {"save_lower_edge_lookup", (PyCFunction) _cubetree_save_lower_edge_lookup, METH_NOARGS, "Saves the lower edge lookup table to a file."},
+    {"run_cube_turns", (PyCFunction) _cubetree_run_cube_turns, METH_VARARGS, "Runs a number of random turns on a cube. Useful for profiling."},
+    {"run_corner_encodes", (PyCFunction) _cubetree_run_corner_encodes, METH_VARARGS, "Runs a number of random turns on a cube, encoding its corners at each step. Useful for profiling."},
+    {"run_upper_edge_encodes", (PyCFunction) _cubetree_run_upper_edge_encodes, METH_VARARGS, "Runs a number of random turns on a cube, encoding its upper edges at each step. Useful for profiling."},
+    {"run_lower_edge_encodes", (PyCFunction) _cubetree_run_lower_edge_encodes, METH_VARARGS, "Runs a number of random turns on a cube, encoding its lower edgess at each step. Useful for profiling."},
+    {"run_all_encodes", (PyCFunction) _cubetree_run_all_encodes, METH_VARARGS, "Runs a number of random turns on a cube, encoding the entire cube at each step. Useful for profiling."},
     {NULL, NULL, 0, NULL}
 };
 

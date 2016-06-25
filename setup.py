@@ -5,7 +5,8 @@ module = Extension("_cubetree",
                             "_cubetree/_cubetree_Cube.c",
                             "_cubetree/cube.c",
                             "_cubetree/lookup.c",
-                            "_cubetree/search.c"],
+                            "_cubetree/search.c",
+                            "_cubetree/profile.c"],
                    include_dirs=["_cubetree/"],
                    extra_compile_args=["-O3"])
 
