@@ -26,6 +26,9 @@ class JSONSerializable(metaclass=JSONSerializableMeta):
         raise NotImplementedError
 
 
+class EndOfStream(Exception): pass
+
+
 class JSONSocketProxy:
 
     def __init__(self, socket):
@@ -33,8 +36,22 @@ class JSONSocketProxy:
         self.read_file = socket.makefile("r")
         self.write_file = socket.makefile("w")
 
+    def _read_obj_string(self):
+        message = self.read_file.readline()
+        if len(message) == 0:
+            return None
+        if message[-1] != "\n":
+            return None
+        return message[:-1]
+
+    def _write_obj_string(self, message):
+        self.write_file.write(message + "\n")
+        self.write_file.flush()
+
     def read(self):
-        message = self.read_file.readline().rstrip("\n")
+        message = self._read_obj_string()
+        if message is None:
+            raise EndOfStream
         obj = json.loads(message)
         qname = obj[0]
         data = obj[1]
@@ -51,12 +68,10 @@ class JSONSocketProxy:
                 cls.json_serialize(obj)])
         else:
             message = json.dumps(["_", obj])
-        self.write_file.write(message + "\n")
-        self.write_file.flush()
+        self._write_obj_string(message)
 
     def close(self):
         self.read_file.close()
         self.write_file.close()
-        self.socket.shutdown()
         self.socket.close()
 

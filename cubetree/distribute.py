@@ -161,11 +161,14 @@ class WorkerProcess(multiprocessing.Process):
         self.port = port
 
     def job_loop(self):
-        while True:
-            job = self.connection.read()
-            print("DEPTH", job.depth)
-            solution = job.cube.search_depth(job.depth)
-            self.connection.write(solution)
+        try:
+            while True:
+                job = self.connection.read()
+                print("DEPTH", job.depth)
+                solution = job.cube.search_depth(job.depth)
+                self.connection.write(solution)
+        except cubetree.json_socket_proxy.EndOfStream:
+            pass
 
     def run(self):
         worker_socket = socket.socket()
