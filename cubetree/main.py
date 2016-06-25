@@ -57,7 +57,9 @@ def main():
             while True:
                 shuffle_depth = int(input("shuffle: "))
                 c = cubetree.cube.Cube()
-                c.shuffle(shuffle_depth)
+                shuffle_algorithm = c.shuffle(shuffle_depth)
+                print(shuffle_algorithm)
+                print(c)
                 print("SOLUTION:", solver.solve(c))
                 if input("solve another? (y/n) ") != "y":
                     break

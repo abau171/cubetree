@@ -1,4 +1,5 @@
 import enum
+import random
 
 import _cubetree
 
@@ -77,8 +78,23 @@ class Cube:
     def turn(self, face, turn_type):
         self.raw_cube.turn(face.value, turn_type.value)
 
+    def apply_algorithm(self, algorithm):
+        for face, turn_type in algorithm:
+            self.turn(face, turn_type)
+
     def shuffle(self, i):
-        self.raw_cube.shuffle(i)
+        move_list = []
+        last_face = None
+        for _ in range(i):
+            face = last_face
+            while face == last_face:
+                face = Face(random.randint(0, 5))
+            last_face = face
+            turn_type = TurnType(random.randint(1, 3))
+            move_list.append((face, turn_type))
+        shuffle_algorithm = Algorithm(move_list)
+        self.apply_algorithm(shuffle_algorithm)
+        return shuffle_algorithm
 
     def search_depth(self, depth):
         raw_solution = self.raw_cube.search_depth(depth)
