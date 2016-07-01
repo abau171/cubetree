@@ -107,13 +107,14 @@ class JobManager:
 
     def return_job(self, job):
         with self.not_empty:
+            self.unfinished_jobs -= 1
+            self.all_jobs_done.notify()
             if self.solution is None:
                 if self.next_job is None:
                     self.next_job = job
                     self.not_empty.notify()
                 else:
                     self.returned_jobs.append(job)
-            self.unfinished_jobs -= 1
 
     def set_solution(self, solution):
         with self.mutex:
