@@ -202,6 +202,8 @@ class WorkerProcess(multiprocessing.Process):
                     print(".", end="")
                     sys.stdout.flush()
                     self.connection.write(None)
+        except KeyboardInterrupt:
+            pass
         except cubetree.json_socket_proxy.EndOfStream:
             pass
 
@@ -222,4 +224,8 @@ def start_worker(hostname, port):
 def join_workers():
     for worker in _workers:
         worker.join()
+
+def terminate_workers():
+    for worker in _workers:
+        worker.terminate()
 

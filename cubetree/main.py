@@ -85,5 +85,9 @@ def main():
                 if input("solve another? (y/n) ") != "y":
                     break
         if start_workers >= 0:
-            cubetree.distribute.join_workers()
+            try:
+                cubetree.distribute.join_workers()
+            except KeyboardInterrupt:
+                print("terminating workers...")
+                cubetree.distribute.terminate_workers()
 
