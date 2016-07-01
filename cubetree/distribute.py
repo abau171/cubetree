@@ -107,7 +107,7 @@ class JobManager:
 
     def return_job(self, job):
         with self.not_empty:
-            if solution is None:
+            if self.solution is None:
                 if self.next_job is None:
                     self.next_job = job
                     self.not_empty.notify()
@@ -212,6 +212,14 @@ class WorkerProcess(multiprocessing.Process):
         self.job_loop()
         self.connection.close()
 
+_workers = set()
+
 def start_worker(hostname, port):
-    WorkerProcess(hostname, port).start()
+    worker = WorkerProcess(hostname, port)
+    worker.start()
+    _workers.add(worker)
+
+def join_workers():
+    for worker in _workers:
+        worker.join()
 

@@ -84,4 +84,6 @@ def main():
                 print("{}m{}s".format(minutes_elapsed, seconds_elapsed))
                 if input("solve another? (y/n) ") != "y":
                     break
+        if start_workers >= 0:
+            cubetree.distribute.join_workers()
 
