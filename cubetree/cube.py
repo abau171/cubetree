@@ -3,7 +3,7 @@ import random
 
 import _cubetree
 
-import cubetree.json_socket_proxy
+import cubetree.distribute.json_socket_proxy
 
 
 class Face(enum.Enum):
@@ -17,7 +17,7 @@ class TurnType(enum.Enum):
     NO_TURN, CLOCKWISE, DOUBLE, COUNTER = range(4)
 
 
-class Algorithm(cubetree.json_socket_proxy.JSONSerializable):
+class Algorithm(cubetree.distribute.json_socket_proxy.JSONSerializable):
 
     def __init__(self, move_list=None):
         if move_list is not None:
