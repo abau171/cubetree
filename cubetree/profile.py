@@ -2,6 +2,18 @@ import time
 
 import _cubetree
 
+def profile_and_print():
+    raw_tps = estimate_raw_tps()
+    print("{} RAW MTPS".format(raw_tps / 1000000))
+    ceps = estimate_ceps()
+    print("{} MCEPS".format(ceps / 1000000))
+    ueeps = estimate_ueeps()
+    print("{} MUEEPS".format(ueeps / 1000000))
+    leeps = estimate_leeps()
+    print("{} MLEEPS".format(leeps / 1000000))
+    eps = estimate_eps()
+    print("{} MEPS".format(eps / 1000000))
+
 def estimate_raw_tps():
     start_time = time.time()
     num_turns = 10000000
