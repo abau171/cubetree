@@ -35,11 +35,15 @@ class WorkerConnectionThread(threading.Thread):
     def job_loop(self):
         while True:
             job = self.job_manager.get()
-            self.connection.write(job)
             try:
+                self.connection.write(job)
                 solution = self.connection.read()
             except cubetree.json_socket_proxy.EndOfStream:
                 self.job_manager.return_job(job)
+                return
+            except OSError as e:
+                self.job_manager.return_job(job)
+                print("got OS error:", e)
                 return
             if solution is not None:
                 self.job_manager.set_solution(solution)
@@ -196,16 +200,17 @@ class WorkerProcess(multiprocessing.Process):
                 last_face = None if len(job.partial_solution.move_list) == 0 else job.partial_solution.move_list[-1][0]
                 solution = job.cube.search_depth(job.depth, last_face)
                 if solution is not None:
-                    print("X", end="")
-                    sys.stdout.flush()
+                    print("X", end="", flush=True)
                     self.connection.write(job.partial_solution + solution)
                 else:
-                    print(".", end="")
-                    sys.stdout.flush()
+                    print(".", end="", flush=True)
                     self.connection.write(None)
         except KeyboardInterrupt:
             pass
         except cubetree.json_socket_proxy.EndOfStream:
+            pass
+        except OSError as e:
+            print("got OS error:", e)
             pass
 
     def run(self):
