@@ -71,19 +71,24 @@ def main():
                 cubetree.distribute.start_worker(hostname, port)
         if serve:
             while True:
-                shuffle_depth = int(input("shuffle: "))
+                command = input("\nshuffle depth or 'exit': ")
+                if command == "exit":
+                    break
+                try:
+                    shuffle_depth = int(command)
+                except ValueError:
+                    print("please enter an integer as the shuffle depth")
+                    continue
                 c = cubetree.cube.Cube()
                 shuffle_algorithm = c.shuffle(shuffle_depth)
-                print(shuffle_algorithm)
+                print("\nshuffle used: {}\n".format(shuffle_algorithm))
                 print(c)
                 start_time = time.time()
-                print("SOLUTION:", solver.solve(c))
+                print("solution:", solver.solve(c))
                 time_elapsed = time.time() - start_time
                 seconds_elapsed = int(time_elapsed % 60)
                 minutes_elapsed = int(time_elapsed // 60)
-                print("{}m{}s".format(minutes_elapsed, seconds_elapsed))
-                if input("solve another? (y/n) ") != "y":
-                    break
+                print("solve took {}m{}s".format(minutes_elapsed, seconds_elapsed))
         if start_workers >= 0:
             try:
                 cubetree.distribute.join_workers()
