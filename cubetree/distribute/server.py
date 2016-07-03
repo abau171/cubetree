@@ -126,7 +126,11 @@ def run_solver(hostname, port):
             shuffle_algorithm = cur_cube.shuffle(shuffle_depth)
             print("shuffle algorithm: {}".format(shuffle_algorithm))
         elif command == "turn":
-            print("TODO")
+            try:
+                algorithm = cubetree.cube.Algorithm(input("algorithm: "))
+                cur_cube.apply_algorithm(algorithm)
+            except ValueError:
+                print("invalid algorithm")
         elif command == "solve":
             start_time = time.time()
             solution = solver.solve(cur_cube)
@@ -135,4 +139,8 @@ def run_solver(hostname, port):
             seconds_elapsed = int(time_elapsed % 60)
             minutes_elapsed = int(time_elapsed // 60)
             print("solve took {}m{}s".format(minutes_elapsed, seconds_elapsed))
+        elif command == "":
+            pass
+        else:
+            print("unknown command")
 

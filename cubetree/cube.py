@@ -1,13 +1,26 @@
 import enum
 import random
+import collections
 
 import _cubetree
 
 import cubetree.distribute.json_socket_proxy
 
 
+_face_strings = ["U", "L", "F", "R", "B", "D"]
+_tt_strings = ["?", "", "2", "'"]
+
+
 class Face(enum.Enum):
     UP, LEFT, FRONT, RIGHT, BACK, DOWN = range(6)
+
+    @classmethod
+    def from_string(cls, face_str):
+        return Face(_face_strings.index(face_str))
+
+    @classmethod
+    def to_string(cls, face):
+        return _face_strings[face.value]
 
     def opposite(self):
         return [Face.DOWN, Face.RIGHT, Face.BACK, Face.LEFT, Face.FRONT, Face.UP][self.value]
@@ -16,17 +29,35 @@ class Face(enum.Enum):
 class TurnType(enum.Enum):
     NO_TURN, CLOCKWISE, DOUBLE, COUNTER = range(4)
 
+    @classmethod
+    def from_string(cls, tt_str):
+        return TurnType(_tt_strings.index(tt_str))
+
+    @classmethod
+    def to_string(cls, turn_type):
+        return _tt_strings[turn_type.value]
+
+
+def parse_move(move_str):
+    if len(move_str) == 0:
+        raise ValueError("Move string must contain either 1 or 2 characters.")
+    face = Face.from_string(move_str[0])
+    turn_type = TurnType.from_string(move_str[1:])
+    return face, turn_type
+
 
 class Algorithm(cubetree.distribute.json_socket_proxy.JSONSerializable):
 
     def __init__(self, move_list=None):
-        if move_list is not None:
+        if isinstance(move_list, str):
+            self.move_list = list(parse_move(move_str) for move_str in move_list.split())
+        elif isinstance(move_list, collections.Iterable):
             self.move_list = list(move_list)
         else:
             self.move_list = []
 
     def __str__(self):
-        return " ".join(["U", "L", "F", "R", "B", "D"][face.value] + ["?", "", "2", "'"][turn_type.value] for face, turn_type in self.move_list)
+        return " ".join(Face.to_string(face) + TurnType.to_string(turn_type) for face, turn_type in self.move_list)
 
     def __iter__(self):
         return iter(self.move_list)
