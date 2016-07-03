@@ -91,23 +91,48 @@ class DistributedSolver:
 
 def run_solver(hostname, port):
     solver = DistributedSolver(hostname, port)
+    cur_cube = cubetree.cube.Cube()
+    print("type 'commands' to view a list of commands\n")
     while True:
-        command = input("\nshuffle depth or 'exit': ")
+        command = input("> ")
         if command == "exit":
             break
-        try:
-            shuffle_depth = int(command)
-        except ValueError:
-            print("please enter an integer as the shuffle depth")
-            continue
-        c = cubetree.cube.Cube()
-        shuffle_algorithm = c.shuffle(shuffle_depth)
-        print("\nshuffle used: {}\n".format(shuffle_algorithm))
-        print(c)
-        start_time = time.time()
-        print("solution:", solver.solve(c))
-        time_elapsed = time.time() - start_time
-        seconds_elapsed = int(time_elapsed % 60)
-        minutes_elapsed = int(time_elapsed // 60)
-        print("solve took {}m{}s".format(minutes_elapsed, seconds_elapsed))
+        elif command == "commands":
+            print("""\
+'exit' : Exits the program immediately.
+'commands' : Shows the command list.
+'show' : Displays the cube in its current state.
+'reset' : Resets the cube to a new, solved cube.
+'shuffle' : Shuffles the cube a specified number of times from its current state.
+            Also prints the shuffle algorithm when finished.
+'turn' : Performs a specified algorithm on the cube.
+'solve' : Performs a distributed solve on the cube from its current state to the start state.
+          The solution algorithm is printed when found.\
+""")
+        elif command == "show":
+            print()
+            print(cur_cube)
+        elif command == "reset":
+            cur_cube = cubetree.cube.Cube()
+        elif command == "shuffle":
+            shuffle_depth = -1
+            while shuffle_depth < 0:
+                try:
+                    shuffle_depth = int(input("shuffle depth: "))
+                except ValueError:
+                    print("please enter a non-negative integer as the shuffle depth")
+                if shuffle_depth < 0:
+                    print("please enter a non-negative integer as the shuffle depth")
+            shuffle_algorithm = cur_cube.shuffle(shuffle_depth)
+            print("shuffle algorithm: {}".format(shuffle_algorithm))
+        elif command == "turn":
+            print("TODO")
+        elif command == "solve":
+            start_time = time.time()
+            solution = solver.solve(cur_cube)
+            print("solution:", solution)
+            time_elapsed = time.time() - start_time
+            seconds_elapsed = int(time_elapsed % 60)
+            minutes_elapsed = int(time_elapsed // 60)
+            print("solve took {}m{}s".format(minutes_elapsed, seconds_elapsed))
 
