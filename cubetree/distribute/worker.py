@@ -1,6 +1,7 @@
 import socket
 import multiprocessing
 
+import cubetree.lookup
 import cubetree.distribute.json_socket_proxy
 
 
@@ -55,4 +56,17 @@ def join_workers():
 def terminate_workers():
     for worker in _workers:
         worker.terminate()
+
+
+def run_worker(hostname, port, num_workers):
+    cubetree.lookup.load_or_gen_lookups()
+    if num_workers == 0:
+        num_workers = multiprocessing.cpu_count()
+    for i in range(num_workers):
+        start_worker(hostname, port)
+    try:
+        join_workers()
+    except KeyboardInterrupt:
+        print("terminating workers...")
+        terminate_workers()
 

@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 
 import cubetree.cube
 import cubetree.distribute.json_socket_proxy
@@ -87,4 +88,26 @@ class DistributedSolver:
             solution = self.job_manager.get_solution()
             if solution is not None:
                 return solution
+
+def run_solver(hostname, port):
+    solver = DistributedSolver(hostname, port)
+    while True:
+        command = input("\nshuffle depth or 'exit': ")
+        if command == "exit":
+            break
+        try:
+            shuffle_depth = int(command)
+        except ValueError:
+            print("please enter an integer as the shuffle depth")
+            continue
+        c = cubetree.cube.Cube()
+        shuffle_algorithm = c.shuffle(shuffle_depth)
+        print("\nshuffle used: {}\n".format(shuffle_algorithm))
+        print(c)
+        start_time = time.time()
+        print("solution:", solver.solve(c))
+        time_elapsed = time.time() - start_time
+        seconds_elapsed = int(time_elapsed % 60)
+        minutes_elapsed = int(time_elapsed // 60)
+        print("solve took {}m{}s".format(minutes_elapsed, seconds_elapsed))
 

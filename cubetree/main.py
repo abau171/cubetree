@@ -2,7 +2,6 @@ import sys
 import getopt
 import socket
 import multiprocessing
-import time
 
 import cubetree.cube
 import cubetree.lookup
@@ -53,38 +52,9 @@ def main():
     elif action == "profile":
         cubetree.profile.profile_and_print()
     elif action == "serve":
-        solver = cubetree.distribute.server.DistributedSolver(hostname, port)
-        while True:
-            command = input("\nshuffle depth or 'exit': ")
-            if command == "exit":
-                break
-            try:
-                shuffle_depth = int(command)
-            except ValueError:
-                print("please enter an integer as the shuffle depth")
-                continue
-            c = cubetree.cube.Cube()
-            shuffle_algorithm = c.shuffle(shuffle_depth)
-            print("\nshuffle used: {}\n".format(shuffle_algorithm))
-            print(c)
-            start_time = time.time()
-            print("solution:", solver.solve(c))
-            time_elapsed = time.time() - start_time
-            seconds_elapsed = int(time_elapsed % 60)
-            minutes_elapsed = int(time_elapsed // 60)
-            print("solve took {}m{}s".format(minutes_elapsed, seconds_elapsed))
+        cubetree.distribute.server.run_solver(hostname, port)
     elif action == "work":
-        cubetree.lookup.load_or_gen_lookups()
-        if num_workers == 0:
-            num_workers = multiprocessing.cpu_count()
-        for i in range(num_workers):
-            cubetree.distribute.worker.start_worker(hostname, port)
-        try:
-            cubetree.distribute.worker.join_workers()
-        except KeyboardInterrupt:
-            print("terminating workers...")
-            cubetree.distribute.worker.terminate_workers()
+        cubetree.distribute.worker.run_worker(hostname, port, num_workers)
     else:
         print_usage()
-        return
 
