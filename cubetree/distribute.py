@@ -134,9 +134,7 @@ def worker_search_depth(call):
         return None
     else:
         print("X", end="", flush=True)
-        solution_state = [[face.value, turn_type.value]
-                for face, turn_type in solution]
-        return solution_state
+        return solution.get_state()
 
 
 def run_worker_pool(hostname, port, num_workers):

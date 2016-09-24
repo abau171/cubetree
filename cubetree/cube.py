@@ -63,6 +63,10 @@ class Algorithm:
     def __add__(self, other):
         return Algorithm(self.move_list + other.move_list)
 
+    def get_state(self):
+        return [[face.value, turn_type.value] for face, turn_type
+                in self.move_list]
+
 
 class Cube:
 
