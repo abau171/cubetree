@@ -42,9 +42,12 @@ def gen_jobs(cube, depth, partial_solution=cubetree.cube.Algorithm()):
                 turn_type = cubetree.cube.TurnType(turn_type_id)
                 clone_cube = cubetree.cube.Cube(cube.get_state())
                 clone_cube.turn(face, turn_type)
-                yield from gen_jobs(clone_cube, depth - 1, partial_solution + cubetree.cube.Algorithm([(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))]))
+                for job, sub_progress in gen_jobs(clone_cube, depth - 1, partial_solution + cubetree.cube.Algorithm([(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))])):
+                    progress = (face_id * 3 + (turn_type_id - 1)
+                        + sub_progress) / 18
+                    yield job, progress
     else:
-        yield CubeJob(cube, depth, partial_solution)
+        yield CubeJob(cube, depth, partial_solution), 0
 
 
 async def solve(cube, master):
@@ -53,12 +56,31 @@ async def solve(cube, master):
         return cubetree.cube.Algorithm()
     for cur_depth in range(1, 21):
 
-        print("DEPTH", cur_depth)
+        print("DEPTH {:>2} [".format(cur_depth), end="", flush=True)
 
-        async with master.run(gen_jobs(cube, cur_depth)) as js:
+        def progress_filter(jobs):
+            cur_progress = 0
+            inc = 0.02
+            bar_char = "="
+            for job, progress in jobs:
+                while progress > cur_progress:
+                    print(bar_char, end="", flush=True)
+                    cur_progress += inc
+                yield job
+            progress = 1
+            while progress > cur_progress:
+                print(bar_char, end="", flush=True)
+                cur_progress += inc
+
+        job_generator = progress_filter(gen_jobs(cube, cur_depth))
+
+        async with master.run(job_generator) as js:
             async for solution in js.results():
                 if solution is not None:
+                    print("")
                     return solution
+
+        print("]")
 
 
 async def solver_main(hostname, port):
