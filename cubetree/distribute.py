@@ -62,7 +62,11 @@ async def solve(cube, master):
 
 
 async def solver_main(hostname, port):
-    master = await highfive.start_master(host=hostname, port=port)
+    async with await highfive.start_master(
+            host=hostname, port=port) as master:
+        await command_loop(master)
+
+async def command_loop(master):
     cur_cube = cubetree.cube.Cube()
     print("type 'commands' to view a list of commands\n")
     while True:
