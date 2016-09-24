@@ -1,57 +1,33 @@
-import socket
-import threading
 import time
+import asyncio
+import multiprocessing
+import highfive
 
 import cubetree.cube
-import cubetree.distribute.json_socket_proxy
-import cubetree.distribute.job_manager
 
 
-class WorkerConnectionThread(threading.Thread):
+class CubeJob(highfive.Job):
 
-    def __init__(self, connection, job_manager):
-        super().__init__(daemon=True)
-        self.connection = connection
-        self.job_manager = job_manager
+    def __init__(self, cube, depth, partial_solution):
 
-    def job_loop(self):
-        while True:
-            job = self.job_manager.get()
-            try:
-                self.connection.write(job)
-                solution = self.connection.read()
-            except cubetree.distribute.json_socket_proxy.EndOfStream:
-                self.job_manager.return_job(job)
-                return
-            except OSError as e:
-                self.job_manager.return_job(job)
-                return
-            if solution is not None:
-                self.job_manager.set_solution(solution)
-            self.job_manager.job_done()
+        self._cube = cube
+        self._depth = depth
+        self._partial_solution = partial_solution
 
-    def run(self):
-        self.job_loop()
-        self.connection.close()
+    def get_call(self):
 
+        return [self._cube.get_state(), self._depth]
 
-class WorkerListenerThread(threading.Thread):
+    def get_result(self, response):
 
-    def __init__(self, hostname, port, job_manager):
-        super().__init__(daemon=True)
-        self.hostname = hostname
-        self.port = port
-        self.job_manager = job_manager
+        if response is None:
+            return None
 
-    def run(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            server_socket.bind((self.hostname, self.port))
-            server_socket.listen(5)
-            while True:
-                client_socket, address = server_socket.accept()
-                worker_connection = WorkerConnectionThread(cubetree.distribute.json_socket_proxy.JSONSocketProxy(client_socket), self.job_manager)
-                worker_connection.start()
+        delta = cubetree.cube.Algorithm(
+                (cubetree.cube.Face(move[0]), cubetree.cube.TurnType(move[1]))
+                for move in response)
+        solution = self._partial_solution + delta
+        return solution
 
 
 def gen_jobs(cube, depth, partial_solution=cubetree.cube.Algorithm()):
@@ -68,29 +44,26 @@ def gen_jobs(cube, depth, partial_solution=cubetree.cube.Algorithm()):
                 clone_cube.turn(face, turn_type)
                 yield from gen_jobs(clone_cube, depth - 1, partial_solution + cubetree.cube.Algorithm([(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))]))
     else:
-        yield cubetree.distribute.job_manager.Job(cube, depth, partial_solution)
+        yield CubeJob(cube, depth, partial_solution)
 
 
-class DistributedSolver:
+async def solve(cube, master):
 
-    def __init__(self, hostname, port):
-        self.job_manager = cubetree.distribute.job_manager.JobManager()
-        WorkerListenerThread(hostname, port, self.job_manager).start()
+    if cube.is_solved():
+        return cubetree.cube.Algorithm()
+    for cur_depth in range(1, 21):
 
-    def solve(self, cube):
-        if cube.is_solved():
-            return cubetree.cube.Algorithm()
-        for cur_depth in range(1, 21):
-            print("DEPTH", cur_depth)
-            self.job_manager.set_solution(None)
-            self.job_manager.set_job_source(gen_jobs(cube, cur_depth))
-            self.job_manager.join()
-            solution = self.job_manager.get_solution()
-            if solution is not None:
-                return solution
+        print("DEPTH", cur_depth)
 
-def run_solver(hostname, port):
-    solver = DistributedSolver(hostname, port)
+        async with master.run(gen_jobs(cube, cur_depth)) as js:
+            async for solution in js.results():
+                if solution is not None:
+                    return solution
+
+
+async def solver_main(hostname, port):
+    master = await highfive.start_master(host=hostname, port=port)
+    print(master)
     cur_cube = cubetree.cube.Cube()
     print("type 'commands' to view a list of commands\n")
     while True:
@@ -133,7 +106,7 @@ def run_solver(hostname, port):
                 print("invalid algorithm")
         elif command == "solve":
             start_time = time.time()
-            solution = solver.solve(cur_cube)
+            solution = await solve(cur_cube, master)
             print("solution:", solution)
             time_elapsed = time.time() - start_time
             seconds_elapsed = int(time_elapsed % 60)
@@ -141,6 +114,33 @@ def run_solver(hostname, port):
             print("solve took {}m{}s".format(minutes_elapsed, seconds_elapsed))
         elif command == "":
             pass
-        else:
-            print("unknown command")
+
+
+def run_solver(hostname, port):
+    asyncio.get_event_loop().run_until_complete(solver_main(hostname, port))
+
+
+def worker_search_depth(call):
+    cube_state, depth = call
+    cube = cubetree.cube.Cube(cube_state)
+    solution = cube.search_depth(depth)
+    if solution is None:
+        print("-", end="", flush=True)
+        return None
+    else:
+        print("X", end="", flush=True)
+        solution_state = [[face.value, turn_type.value]
+                for face, turn_type in solution]
+        return solution_state
+
+
+def run_worker_pool(hostname, port, num_workers):
+    cubetree.lookup.load_or_gen_lookups()
+    if num_workers == 0:
+        num_workers = multiprocessing.cpu_count()
+    try:
+        highfive.run_worker_pool(worker_search_depth, host=hostname,
+                port=port, max_workers=num_workers)
+    except KeyboardInterrupt:
+        print("keyboard interrupt")
 

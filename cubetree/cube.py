@@ -4,8 +4,6 @@ import collections
 
 import _cubetree
 
-import cubetree.distribute.json_socket_proxy
-
 
 _face_strings = ["U", "L", "F", "R", "B", "D"]
 _tt_strings = ["?", "", "2", "'"]
@@ -46,7 +44,7 @@ def parse_move(move_str):
     return face, turn_type
 
 
-class Algorithm(cubetree.distribute.json_socket_proxy.JSONSerializable):
+class Algorithm:
 
     def __init__(self, move_list=None):
         if isinstance(move_list, str):
@@ -64,14 +62,6 @@ class Algorithm(cubetree.distribute.json_socket_proxy.JSONSerializable):
 
     def __add__(self, other):
         return Algorithm(self.move_list + other.move_list)
-
-    @classmethod
-    def json_serialize(cls, obj):
-        return [[face.value, turn_type.value] for face, turn_type in obj]
-
-    @classmethod
-    def json_deserialize(cls, obj):
-        return Algorithm((Face(move[0]), TurnType(move[1])) for move in obj)
 
 
 class Cube:

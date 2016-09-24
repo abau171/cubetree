@@ -3,10 +3,9 @@ import getopt
 import socket
 import multiprocessing
 
-import cubetree.cube
 import cubetree.lookup
-import cubetree.distribute.server
-import cubetree.distribute.worker
+import cubetree.distribute
+import cubetree.distribute
 import cubetree.profile
 
 
@@ -52,9 +51,11 @@ def main():
     elif action == "profile":
         cubetree.profile.profile_and_print()
     elif action == "serve":
-        cubetree.distribute.server.run_solver(hostname, port)
+        cubetree.distribute.run_solver(hostname, port)
     elif action == "work":
-        cubetree.distribute.worker.run_worker(hostname, port, num_workers)
+        if hostname == "":
+            hostname = "localhost"
+        cubetree.distribute.run_worker_pool(hostname, port, num_workers)
     else:
         print_usage()
 
