@@ -44,13 +44,20 @@ def parse_move(move_str):
     return face, turn_type
 
 
+def ensure_move(m):
+    if isinstance(m[0], int):
+        return [Face(m[0]), TurnType(m[1])]
+    else:
+        return m
+
+
 class Algorithm:
 
     def __init__(self, move_list=None):
         if isinstance(move_list, str):
             self.move_list = list(parse_move(move_str) for move_str in move_list.split())
         elif isinstance(move_list, collections.Iterable):
-            self.move_list = list(move_list)
+            self.move_list = [ensure_move(m) for m in move_list]
         else:
             self.move_list = []
 
@@ -134,7 +141,7 @@ class Cube:
         if raw_solution is None:
             return None
         else:
-            return Algorithm((Face(face_index), TurnType(turn_type_index)) for face_index, turn_type_index in raw_solution)
+            return Algorithm(raw_solution)
 
     def solve(self):
         if self.is_solved():

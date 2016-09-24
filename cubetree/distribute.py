@@ -23,9 +23,7 @@ class CubeJob(highfive.Job):
         if response is None:
             return None
 
-        delta = cubetree.cube.Algorithm(
-                (cubetree.cube.Face(move[0]), cubetree.cube.TurnType(move[1]))
-                for move in response)
+        delta = cubetree.cube.Algorithm(response)
         solution = self._partial_solution + delta
         return solution
 
@@ -42,7 +40,7 @@ def gen_jobs(cube, depth, partial_solution=cubetree.cube.Algorithm()):
                 turn_type = cubetree.cube.TurnType(turn_type_id)
                 clone_cube = cubetree.cube.Cube(cube.get_state())
                 clone_cube.turn(face, turn_type)
-                for job, sub_progress in gen_jobs(clone_cube, depth - 1, partial_solution + cubetree.cube.Algorithm([(cubetree.cube.Face(face_id), cubetree.cube.TurnType(turn_type_id))])):
+                for job, sub_progress in gen_jobs(clone_cube, depth - 1, partial_solution + cubetree.cube.Algorithm([face_id, turn_type_id])):
                     progress = (face_id * 3 + (turn_type_id - 1)
                         + sub_progress) / 18
                     yield job, progress
