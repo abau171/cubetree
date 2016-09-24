@@ -3,7 +3,8 @@ import asyncio
 import multiprocessing
 import highfive
 
-import cubetree.cube
+from . import model
+from . import lookup
 
 
 class CubeJob(highfive.Job):
@@ -23,24 +24,24 @@ class CubeJob(highfive.Job):
         if response is None:
             return None
 
-        delta = cubetree.cube.Algorithm(response)
+        delta = model.Algorithm(response)
         solution = self._partial_solution + delta
         return solution
 
 
-def gen_jobs(cube, depth, partial_solution=cubetree.cube.Algorithm()):
+def gen_jobs(cube, depth, partial_solution=model.Algorithm()):
     if depth > 14:
         for face_id in range(6):
-            face = cubetree.cube.Face(face_id)
+            face = model.Face(face_id)
             last_face = None if len(partial_solution.move_list) == 0 else partial_solution.move_list[-1][0]
             if last_face is not None:
                 if face is last_face or (face.value < 3 and face is last_face.opposite()):
                     continue
             for turn_type_id in range(1, 4):
-                turn_type = cubetree.cube.TurnType(turn_type_id)
-                clone_cube = cubetree.cube.Cube(cube.get_state())
+                turn_type = model.TurnType(turn_type_id)
+                clone_cube = model.Cube(cube.get_state())
                 clone_cube.turn(face, turn_type)
-                for job, sub_progress in gen_jobs(clone_cube, depth - 1, partial_solution + cubetree.cube.Algorithm([face_id, turn_type_id])):
+                for job, sub_progress in gen_jobs(clone_cube, depth - 1, partial_solution + model.Algorithm([face_id, turn_type_id])):
                     progress = (face_id * 3 + (turn_type_id - 1)
                         + sub_progress) / 18
                     yield job, progress
@@ -51,7 +52,7 @@ def gen_jobs(cube, depth, partial_solution=cubetree.cube.Algorithm()):
 async def solve(cube, master):
 
     if cube.is_solved():
-        return cubetree.cube.Algorithm()
+        return model.Algorithm()
     for cur_depth in range(1, 21):
 
         print("DEPTH {:>2} [".format(cur_depth), end="", flush=True)
@@ -87,7 +88,7 @@ async def solver_main(hostname, port):
         await command_loop(master)
 
 async def command_loop(master):
-    cur_cube = cubetree.cube.Cube()
+    cur_cube = model.Cube()
     print("type 'commands' to view a list of commands\n")
     while True:
         command = input("> ")
@@ -110,7 +111,7 @@ async def command_loop(master):
             print()
             print(cur_cube)
         elif command == "reset":
-            cur_cube = cubetree.cube.Cube()
+            cur_cube = model.Cube()
         elif command == "shuffle":
             shuffle_depth = -1
             while shuffle_depth < 0:
@@ -128,7 +129,7 @@ async def command_loop(master):
             print("shuffle algorithm: {}".format(shuffle_algorithm))
         elif command == "turn":
             try:
-                algorithm = cubetree.cube.Algorithm(input("algorithm: "))
+                algorithm = model.Algorithm(input("algorithm: "))
                 cur_cube.apply_algorithm(algorithm)
             except ValueError:
                 print("invalid algorithm")
@@ -152,7 +153,7 @@ def run_solver(hostname, port):
 
 def worker_search_depth(call):
     cube_state, depth = call
-    cube = cubetree.cube.Cube(cube_state)
+    cube = model.Cube(cube_state)
     solution = cube.search_depth(depth)
     if solution is None:
         print("-", end="", flush=True)
@@ -163,7 +164,7 @@ def worker_search_depth(call):
 
 
 def run_worker_pool(hostname, port, num_workers):
-    cubetree.lookup.load_or_gen_lookups()
+    lookup.load_or_gen_lookups()
     if num_workers == 0:
         num_workers = multiprocessing.cpu_count()
     try:

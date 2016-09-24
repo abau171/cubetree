@@ -3,10 +3,9 @@ import getopt
 import socket
 import multiprocessing
 
-import cubetree.lookup
-import cubetree.distribute
-import cubetree.distribute
-import cubetree.profile
+from . import lookup
+from . import distribute
+from . import profile
 
 
 def print_usage():
@@ -47,15 +46,15 @@ def main():
             action = "profile"
 
     if action == "gen":
-        cubetree.lookup.load_or_gen_lookups()
+        lookup.load_or_gen_lookups()
     elif action == "profile":
-        cubetree.profile.profile_and_print()
+        profile.profile_and_print()
     elif action == "serve":
-        cubetree.distribute.run_solver(hostname, port)
+        distribute.run_solver(hostname, port)
     elif action == "work":
         if hostname == "":
             hostname = "localhost"
-        cubetree.distribute.run_worker_pool(hostname, port, num_workers)
+        distribute.run_worker_pool(hostname, port, num_workers)
     else:
         print_usage()
 

@@ -1,2 +1,2 @@
-from cubetree.main import main
+from .main import main
 
