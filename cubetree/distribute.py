@@ -80,6 +80,7 @@ async def command_loop(master):
 'show' : Displays the cube in its current state.
 'reset' : Resets the cube to a new, solved cube.
 'shuffle' : Shuffles the cube a specified number of times from its current state.
+            Providing a random seed makes the shuffle reproducible.
             Also prints the shuffle algorithm when finished.
 'turn' : Performs a specified algorithm on the cube.
 'solve' : Performs a distributed solve on the cube from its current state to the start state.
@@ -99,7 +100,11 @@ async def command_loop(master):
                     print("please enter a non-negative integer as the shuffle depth")
                 if shuffle_depth < 0:
                     print("please enter a non-negative integer as the shuffle depth")
-            shuffle_algorithm = cur_cube.shuffle(shuffle_depth)
+            seed = input("random seed (optional): ")
+            if seed == "":
+                shuffle_algorithm = cur_cube.shuffle(shuffle_depth)
+            else:
+                shuffle_algorithm = cur_cube.shuffle(shuffle_depth, seed)
             print("shuffle algorithm: {}".format(shuffle_algorithm))
         elif command == "turn":
             try:

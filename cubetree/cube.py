@@ -109,7 +109,10 @@ class Cube:
         for face, turn_type in algorithm:
             self.turn(face, turn_type)
 
-    def shuffle(self, i):
+    def shuffle(self, i, seed=None):
+        if seed is not None:
+            rand_state = random.getstate()
+            random.seed(seed)
         move_list = []
         last_face = None
         for _ in range(i):
@@ -119,8 +122,10 @@ class Cube:
             last_face = face
             turn_type = TurnType(random.randint(1, 3))
             move_list.append((face, turn_type))
-        shuffle_algorithm = Algorithm(move_list)
+        shuffle_algorithm = Algorithm(reversed(move_list))
         self.apply_algorithm(shuffle_algorithm)
+        if seed is not None:
+            random.setstate(rand_state)
         return shuffle_algorithm
 
     def search_depth(self, depth, last_face=None):
