@@ -7,6 +7,14 @@ from . import model
 from . import lookup
 
 
+JOB_DEPTH = 12
+PROGRESS_BAR_SIZE = 60
+PROGRESS_BAR_CHAR = "="
+
+
+PROGRESS_BAR_INC = 1 / PROGRESS_BAR_SIZE
+
+
 class CubeJob(highfive.Job):
 
     def __init__(self, cube, depth, partial_solution):
@@ -29,47 +37,76 @@ class CubeJob(highfive.Job):
         return solution
 
 
+def gen_moves(last_face):
+
+    for face_id in range(6):
+
+        face = model.Face(face_id)
+
+        if last_face is not None:
+            pruned_opposite = face is last_face.opposite() and face_id < 3
+            if face is last_face or pruned_opposite:
+                continue
+
+        for turn_type_id in range(1, 4):
+            yield face, model.TurnType(turn_type_id)
+
+
+def calculate_progress(face_id, turn_type_id, sub_progress):
+
+    return (3 * face_id + (turn_type_id - 1) + sub_progress) / 18
+
+
 def gen_jobs(cube, depth, partial_solution=model.Algorithm()):
-    if depth > 14:
-        for face_id in range(6):
-            face = model.Face(face_id)
-            last_face = None if len(partial_solution.move_list) == 0 else partial_solution.move_list[-1][0]
-            if last_face is not None:
-                if face is last_face or (face.value < 3 and face is last_face.opposite()):
-                    continue
-            for turn_type_id in range(1, 4):
-                turn_type = model.TurnType(turn_type_id)
-                clone_cube = model.Cube(cube.get_state())
-                clone_cube.turn(face, turn_type)
-                for job, sub_progress in gen_jobs(clone_cube, depth - 1, partial_solution + model.Algorithm([face_id, turn_type_id])):
-                    progress = (face_id * 3 + (turn_type_id - 1)
-                        + sub_progress) / 18
-                    yield job, progress
+
+    if depth <= JOB_DEPTH:
+        yield CubeJob(cube, depth, partial_solution), 1
+        return
+
+    if len(partial_solution) == 0:
+        last_face = None
     else:
-        yield CubeJob(cube, depth, partial_solution), 0
+        last_face = partial_solution[-1][0]
+
+    for face, turn_type in gen_moves(last_face):
+
+        child = cube.clone()
+        child.turn(face, turn_type)
+
+        delta = model.Algorithm([[face.value, turn_type.value]])
+        child_partial = partial_solution + delta
+
+        for job, sub_progress in gen_jobs(child, depth - 1, child_partial):
+            progress = calculate_progress(
+                    face.value, turn_type.value, sub_progress)
+            yield job, progress
+
+
+def progress_filter(jobs):
+
+    cur_progress = 0
+
+    for job, progress in jobs:
+
+        while cur_progress < progress:
+            print(PROGRESS_BAR_CHAR, end="", flush=True)
+            cur_progress += PROGRESS_BAR_INC
+
+        yield job
+
+    while cur_progress < 1:
+        print(PROGRESS_BAR_CHAR, end="", flush=True)
+        cur_progress += PROGRESS_BAR_INC
 
 
 async def solve(cube, master):
 
     if cube.is_solved():
         return model.Algorithm()
+
     for cur_depth in range(1, 21):
 
         print("DEPTH {:>2} [".format(cur_depth), end="", flush=True)
-
-        def progress_filter(jobs):
-            cur_progress = 0
-            inc = 0.02
-            bar_char = "="
-            for job, progress in jobs:
-                while progress > cur_progress:
-                    print(bar_char, end="", flush=True)
-                    cur_progress += inc
-                yield job
-            progress = 1
-            while progress > cur_progress:
-                print(bar_char, end="", flush=True)
-                cur_progress += inc
 
         job_generator = progress_filter(gen_jobs(cube, cur_depth))
 
@@ -83,9 +120,11 @@ async def solve(cube, master):
 
 
 async def solver_main(hostname, port):
+
     async with await highfive.start_master(
             host=hostname, port=port) as master:
         await command_loop(master)
+
 
 async def command_loop(master):
     cur_cube = model.Cube()

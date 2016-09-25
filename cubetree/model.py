@@ -64,6 +64,12 @@ class Algorithm:
     def __str__(self):
         return " ".join(Face.to_string(face) + TurnType.to_string(turn_type) for face, turn_type in self.move_list)
 
+    def __len__(self):
+        return len(self.move_list)
+
+    def __getitem__(self, i):
+        return self.move_list[i]
+
     def __iter__(self):
         return iter(self.move_list)
 
@@ -154,4 +160,6 @@ class Cube:
             if possible_solution != None:
                 return possible_solution
 
+    def clone(self):
+        return Cube(self.get_state())
 
