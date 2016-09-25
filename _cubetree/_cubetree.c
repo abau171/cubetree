@@ -1,13 +1,12 @@
 #include <Python.h>
 
-#include <stdbool.h>
-#include <time.h>
-
 #include <cube.h>
 #include <lookup.h>
 #include <search.h>
 #include <profile.h>
 #include <_cubetree_Cube.h>
+
+/* Module Functions */
 
 static PyObject*
 _cubetree_gen_corner_lookup(PyObject* self)
@@ -134,6 +133,8 @@ _cubetree_run_all_encodes(PyObject* self, PyObject* args)
     Py_RETURN_NONE;
 }
 
+/* _cubetree Module Definition */
+
 static PyMethodDef _cubetree_methods[] = {
     {"gen_corner_lookup", (PyCFunction) _cubetree_gen_corner_lookup, METH_NOARGS, "Generates the corner lookup table."},
     {"gen_upper_edge_lookup", (PyCFunction) _cubetree_gen_upper_edge_lookup, METH_NOARGS, "Generates the upper edge lookup table."},
@@ -163,8 +164,6 @@ static PyModuleDef _cubetreemodule = {
 PyMODINIT_FUNC
 PyInit__cubetree(void)
 {
-    //srand(time(NULL));
-    srand(0);
     PyObject* m;
     if (PyType_Ready(&_cubetree_CubeType) < 0)
         return NULL;

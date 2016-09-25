@@ -1,7 +1,8 @@
 #include <stdlib.h>
-#include <stdio.h>
 
 #include <cube.h>
+
+/* Lookup Tables for Manipulating and Observing Cube */
 
 const cube_t solved_cube = {
     .cornersystem={ .corners={
@@ -134,6 +135,8 @@ static uint8_t edge_facelets[12][2] = {
     {D_FACE, R_FACE}
 };
 
+/* Functions for Manipulating Cube */
+
 void turnCube(cube_t* destination,
               const cube_t* source,
               uint8_t face,
@@ -203,6 +206,8 @@ void turnEdgeSystem(edgesystem_t* destination,
     }
 }
 
+/* Functions for Observing Cube */
+
 uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i) {
     // even indices are for corners, odd indices are for edges
     if (i % 2 == 0) {
@@ -256,19 +261,5 @@ bool isSolvedEdgeSystem(const edgesystem_t* es) {
         }
     }
     return true;
-}
-
-void shuffleCube(cube_t* cube, int iterations) {
-    // don't turn the same face twice in a row for a better shuffle
-    uint8_t last_face = 6;
-    for (int i = 0; i < iterations; i++) {
-        uint8_t face;
-        do {
-            face = rand() % 6;
-        } while (face == last_face);
-        int turn_type = rand() % 3 + 1;
-        turnCubeSelf(cube, face, turn_type);
-        last_face = face;
-    }
 }
 

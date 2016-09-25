@@ -5,6 +5,7 @@
 
 #include <profile.h>
 
+// Turn cube a number of times.
 void run_cube_turns(int num_turns) {
     cube_t cube = solved_cube;
     for (int i = 0; i < num_turns; i++) {
@@ -12,6 +13,7 @@ void run_cube_turns(int num_turns) {
     }
 }
 
+// Encode a cube's corners a number of times.
 void run_cube_corner_encodes(int num_encodes)
 {
     cube_t cube = solved_cube;
@@ -21,6 +23,7 @@ void run_cube_corner_encodes(int num_encodes)
     }
 }
 
+// Encode a cube's upper edges a number of times.
 void run_cube_upper_edge_encodes(int num_encodes)
 {
     cube_t cube = solved_cube;
@@ -30,6 +33,7 @@ void run_cube_upper_edge_encodes(int num_encodes)
     }
 }
 
+// Encode a cube's lower edges a number of times.
 void run_cube_lower_edge_encodes(int num_encodes)
 {
     cube_t cube = solved_cube;
@@ -39,6 +43,7 @@ void run_cube_lower_edge_encodes(int num_encodes)
     }
 }
 
+// Encode an entire cube a number of times.
 void run_cube_all_encodes(int num_encodes)
 {
     cube_t cube = solved_cube;

@@ -1,6 +1,8 @@
 #ifndef _CUBETREE_CUBE_H
 #define _CUBETREE_CUBE_H
 
+/* _cubetree.Cube Type */
+
 PyTypeObject _cubetree_CubeType;
 
 typedef struct {

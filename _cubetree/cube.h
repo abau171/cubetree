@@ -71,7 +71,6 @@ void turnEdgeSystem(edgesystem_t* destination,
 /* cube observation functions */
 uint8_t getFaceletCube(const cube_t* cube, uint8_t face, uint8_t i);
 bool isSolvedCube(const cube_t* cube);
-void shuffleCube(cube_t* cube, int iterations);
 uint8_t getFaceletCornerSystem(const cornersystem_t* cs, uint8_t face, int i);
 bool isSolvedCornerSystem(const cornersystem_t* cs);
 uint8_t getFaceletEdgeSystem(const edgesystem_t* es, uint8_t face, int i);

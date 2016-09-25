@@ -23,12 +23,12 @@ static int ncr(int n, int r) {
     return fact[n] / (fact[r] * fact[n - r]);
 }
 
-/* mmaped lookup tables */
+/* lookup tables */
 static uint8_t corner_lookup[CORNER_LOOKUP_SIZE];
 static uint8_t upper_edge_lookup[EDGE_LOOKUP_SIZE];
 static uint8_t lower_edge_lookup[EDGE_LOOKUP_SIZE];
 
-/* generator queue node definitions*/
+/* generator queue node definitions */
 
 typedef struct corner_queuenode_t {
     cornersystem_t cs;
