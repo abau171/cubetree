@@ -5,7 +5,7 @@ from . import model
 from . import lookup
 
 
-JOB_DEPTH = 12
+JOB_DEPTH = 14
 PROGRESS_BAR_SIZE = 60
 PROGRESS_BAR_CHAR = "="
 
