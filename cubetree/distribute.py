@@ -1,5 +1,3 @@
-import time
-import asyncio
 import multiprocessing
 import highfive
 
@@ -117,77 +115,6 @@ async def solve(cube, master):
                     return solution
 
         print("]")
-
-
-async def solver_main(hostname, port):
-
-    async with await highfive.start_master(
-            host=hostname, port=port) as master:
-        await command_loop(master)
-
-
-async def command_loop(master):
-    cur_cube = model.Cube()
-    print("type 'commands' to view a list of commands\n")
-    while True:
-        command = input("> ")
-        if command == "exit":
-            break
-        elif command == "commands":
-            print("""\
-'exit' : Exits the program immediately.
-'commands' : Shows the command list.
-'show' : Displays the cube in its current state.
-'reset' : Resets the cube to a new, solved cube.
-'shuffle' : Shuffles the cube a specified number of times from its current state.
-            Providing a random seed makes the shuffle reproducible.
-            Also prints the shuffle algorithm when finished.
-'turn' : Performs a specified algorithm on the cube.
-'solve' : Performs a distributed solve on the cube from its current state to the start state.
-          The solution algorithm is printed when found.\
-""")
-        elif command == "show":
-            print()
-            print(cur_cube)
-        elif command == "reset":
-            cur_cube = model.Cube()
-        elif command == "shuffle":
-            shuffle_depth = -1
-            while shuffle_depth < 0:
-                try:
-                    shuffle_depth = int(input("shuffle depth: "))
-                except ValueError:
-                    print("please enter a non-negative integer as the shuffle depth")
-                if shuffle_depth < 0:
-                    print("please enter a non-negative integer as the shuffle depth")
-            seed = input("random seed (optional): ")
-            if seed == "":
-                shuffle_algorithm = cur_cube.shuffle(shuffle_depth)
-            else:
-                shuffle_algorithm = cur_cube.shuffle(shuffle_depth, seed)
-            print("shuffle algorithm: {}".format(shuffle_algorithm))
-        elif command == "turn":
-            try:
-                algorithm = model.Algorithm(input("algorithm: "))
-                cur_cube.apply_algorithm(algorithm)
-            except ValueError:
-                print("invalid algorithm")
-        elif command == "solve":
-            start_time = time.time()
-            solution = await solve(cur_cube, master)
-            print("solution:", solution)
-            time_elapsed = time.time() - start_time
-            seconds_elapsed = int(time_elapsed % 60)
-            minutes_elapsed = int(time_elapsed // 60)
-            print("solve took {}m{}s".format(minutes_elapsed, seconds_elapsed))
-        elif command == "":
-            pass
-        else:
-            print("unknown command")
-
-
-def run_solver(hostname, port):
-    asyncio.get_event_loop().run_until_complete(solver_main(hostname, port))
 
 
 def worker_search_depth(call):

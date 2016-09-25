@@ -4,6 +4,7 @@ import socket
 import multiprocessing
 
 from . import lookup
+from . import commands
 from . import distribute
 from . import profile
 
@@ -50,7 +51,7 @@ def main():
     elif action == "profile":
         profile.profile_and_print()
     elif action == "serve":
-        distribute.run_solver(hostname, port)
+        commands.run_command_loop(hostname, port)
     elif action == "work":
         if hostname == "":
             hostname = "localhost"
