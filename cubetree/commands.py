@@ -28,17 +28,25 @@ async def show(cube, master):
 @command("help")
 async def help(cube, master):
 
-    print("""\
-'exit' : Exits the program immediately.
-'help' : Shows the command list.
-'show' : Displays the cube in its current state.
-'reset' : Resets the cube to a new, solved cube.
-'shuffle' : Shuffles the cube a specified number of times from its current state.
-            Providing a random seed makes the shuffle reproducible.
-            Also prints the shuffle algorithm when finished.
-'turn' : Performs a specified algorithm on the cube.
-'solve' : Performs a distributed solve on the cube from its current state to the start state.
-          The solution algorithm is printed when found.\
+    print("""
+### COMMANDS ###
+
+exit     Exits the program immediately.
+
+help     Shows the command list.
+
+show     Displays the cube in its current state.
+
+reset    Resets the cube to a new, solved cube.
+
+shuffle  Shuffles the cube a specified number of times from its current state.
+         Providing a random seed makes the shuffle reproducible. Also prints
+         the shuffle algorithm when finished.
+
+turn     Performs a specified algorithm on the cube.
+
+solve    Performs a distributed solve on the cube from its current state to
+         the start state. The solution algorithm is printed when found.
 """)
 
 

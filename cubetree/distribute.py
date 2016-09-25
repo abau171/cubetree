@@ -118,9 +118,12 @@ async def solve(cube, master):
 
 
 def worker_search_depth(call):
+
     cube_state, depth = call
     cube = model.Cube(cube_state)
+
     solution = cube.search_depth(depth)
+
     if solution is None:
         print("-", end="", flush=True)
         return None
@@ -130,12 +133,17 @@ def worker_search_depth(call):
 
 
 def run_worker_pool(hostname, port, num_workers):
+
     lookup.load_or_gen_lookups()
+
     if num_workers == 0:
         num_workers = multiprocessing.cpu_count()
+
     try:
+
         highfive.run_worker_pool(worker_search_depth, host=hostname,
                 port=port, max_workers=num_workers)
+
     except KeyboardInterrupt:
         print("keyboard interrupt")
 
